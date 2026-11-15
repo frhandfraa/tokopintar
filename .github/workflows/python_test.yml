@@ -29,6 +29,5 @@ jobs:
 
     - name: 🚀 Run Tests
       run: |
-        # Test ini akan mencoba memanggil localhost:5001. 
-        # Karena di GitHub tidak ada service yang jalan, test akan di-skip jika API mati.
-        pytest tests/test_ai.py -v
+        # Menjalankan pytest dengan flag -v (verbose) dan -rs (tampilkan alasan skip)
+        pytest tests/test_ai.py -v -rs
