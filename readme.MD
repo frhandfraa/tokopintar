@@ -1,6 +1,11 @@
 # TokoPintar 🛍️🤖
 **Sistem E-Commerce dengan Rekomendasi Produk Berbasis AI (Content-Based Filtering) untuk UMKM**
 
+![GitHub Actions](https://img.shields.io/badge/CI-Passing-brightgreen)
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green)
+![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
+
 TokoPintar adalah platform e-commerce modern yang dilengkapi dengan microservice AI untuk memberikan rekomendasi produk yang relevan kepada pembeli. Proyek ini dirancang untuk menyelesaikan masalah pembeli yang kewalahan memilih produk dan membantu UMKM meningkatkan konversi penjualan melalui personalisasi.
 
 ## ✨ Fitur Utama
