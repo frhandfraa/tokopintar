@@ -3,13 +3,13 @@ version: "3.9"
 services:
   db:
     image: postgres:16
-    container_name: tokopintar_db
+    container_name: db_tokoonline
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: tokopintar
+      POSTGRES_USER: user123
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: db_tokoonline
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 

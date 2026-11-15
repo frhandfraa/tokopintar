@@ -76,13 +76,18 @@
         </div>
 
         <div class="mt-5 d-none" id="similar-section">
-            <h3 class="fw-bold mb-4">Anda Mungkin Juga Suka</h3>
+            <!-- Judul ditambahkan ikon robot dan badge AI -->
+            <h3 class="fw-bold mb-4 d-flex align-items-center">
+                <i class="bi bi-robot text-primary me-2"></i> Anda Mungkin Juga Suka 
+                <span class="badge bg-primary fs-6 ms-3 rounded-pill px-3">AI Recommendation</span>
+            </h3>
             <div class="row g-4" id="similar-list"></div>
         </div>
     </div>
 
-    <script>
-        const productId = { product_id };
+        <script>
+        // Pastikan variabel ini dirender oleh Jinja2 Python
+        const productId = "{{ product_id }}";
         console.log("Mencoba memuat ID Produk:", productId);
 
         // 1. Fetch Detail Utama
@@ -92,12 +97,11 @@
                 return res.json();
             })
             .then(product => {
-                console.log("Data produk diterima:", product);
                 document.getElementById('loading-detail').classList.add('d-none');
                 document.getElementById('main-product-card').classList.remove('d-none');
 
                 const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(product.price);
-                const kategoriKunci = product.category.split('|')[0].replace('_', ' ');
+                const kategoriKunci = product.category ? product.category.split('|')[0].replace('_', ' ') : 'Umum';
                 
                 document.getElementById('product-name').innerText = product.name;
                 document.getElementById('product-category').innerText = kategoriKunci;
@@ -113,10 +117,12 @@
                 document.getElementById('error-detail').classList.remove('d-none');
             });
 
-        // 2. Fetch Produk Serupa
+        // 2. Fetch Produk Serupa (Content-Based Filtering)
         fetch(`/api/products/${productId}/similar`)
             .then(res => res.json())
             .then(data => {
+                console.log("Data dari API Similar:", data); // Cek di F12 Console
+                
                 if (data && data.data && data.data.length > 0) {
                     document.getElementById('similar-section').classList.remove('d-none');
                     const list = document.getElementById('similar-list');
@@ -137,9 +143,11 @@
                             </div>
                         `;
                     });
+                } else {
+                    console.log("Data rekomendasi kosong atau format salah.");
                 }
             })
-            .catch(err => console.log("Info: AI Service mungkin mati, rekomendasi tidak dimuat."));
+            .catch(err => console.error("Gagal fetch similar:", err));
     </script>
 </body>
 </html>
