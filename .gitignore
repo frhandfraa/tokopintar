@@ -1,4 +1,3 @@
 # Abaikan file dataset
-data/
 *.csv
 *.json
