@@ -21,10 +21,12 @@ def create_app():
     from app.routes.products import products_bp
     from app.routes.interactions import interactions_bp
     from app.routes.dashboard import dashboard_bp
+    from app.routes.views import views_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(products_bp, url_prefix="/api/products")
     app.register_blueprint(interactions_bp, url_prefix="/api/interactions")
     app.register_blueprint(dashboard_bp, url_prefix="/api/dashboard")
+    app.register_blueprint(views_bp)  
 
     return app
