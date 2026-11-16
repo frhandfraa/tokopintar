@@ -2,7 +2,6 @@ from app import db
 from datetime import datetime
 import bcrypt
 
-
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
@@ -13,23 +12,16 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def set_password(self, password):
-        self.password_hash = bcrypt.hashpw(
-            password.encode(), bcrypt.gensalt()
-        ).decode()
+        self.password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
     def check_password(self, password):
-        return bcrypt.checkpw(
-            password.encode(), self.password_hash.encode()
-        )
+        return bcrypt.checkpw(password.encode(), self.password_hash.encode())
 
     def to_dict(self):
-        return {"id": self.id, "name": self.name,
-                "email": self.email, "role": self.role}
-
+        return {"id": self.id, "name": self.name, "email": self.email, "role": self.role}
 
 class Product(db.Model):
     __tablename__ = "products"
-    # Gunakan BigInteger untuk menampung ID Tokopedia
     id = db.Column(db.BigInteger, primary_key=True) 
     name = db.Column(db.String(255), nullable=False)
     category = db.Column(db.String(100))
@@ -48,12 +40,10 @@ class Product(db.Model):
             "rating": self.rating
         }
 
-
 class Interaction(db.Model):
     __tablename__ = "interactions"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    # Ubah ke BigInteger
     product_id = db.Column(db.BigInteger, db.ForeignKey("products.id"), nullable=False)
     type = db.Column(db.String(20), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
@@ -64,7 +54,6 @@ class Interaction(db.Model):
             "product_id": self.product_id, "type": self.type,
             "timestamp": self.timestamp.isoformat()
         }
-
 
 class Order(db.Model):
     __tablename__ = "orders"
@@ -83,12 +72,10 @@ class Order(db.Model):
             "items": [i.to_dict() for i in self.items]
         }
 
-
 class OrderItem(db.Model):
     __tablename__ = "order_items"
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
-    # Ubah ke BigInteger
     product_id = db.Column(db.BigInteger, db.ForeignKey("products.id"), nullable=False)
     quantity = db.Column(db.Integer, default=1)
     price = db.Column(db.Numeric(12, 2), default=0)
@@ -98,3 +85,13 @@ class OrderItem(db.Model):
             "id": self.id, "product_id": self.product_id,
             "quantity": self.quantity, "price": float(self.price)
         }
+
+# TAMBAHAN BARU: Model Review (Ulasan)
+class Review(db.Model):
+    __tablename__ = "reviews"
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.BigInteger, db.ForeignKey("products.id"), nullable=False)
+    user_name = db.Column(db.String(100), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
