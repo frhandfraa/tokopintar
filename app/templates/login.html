@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - TokoPintar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-color: #03AC0E; }
+        body { font-family: 'Open Sans', sans-serif; background-color: #F7F7F7; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .auth-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
+        .btn-tokped { background-color: var(--primary-color); color: white; font-weight: 700; width: 100%; padding: 12px; border-radius: 8px; border: none; }
+        .btn-tokped:hover { background-color: #02960C; color: white; }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <h3 class="fw-bold text-center mb-4">Masuk ke TokoPintar</h3>
+        <div id="alert-box" class="alert alert-danger d-none"></div>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-tokped mb-3">Masuk</button>
+            <p class="text-center text-muted" style="font-size: 0.9rem;">Belum punya akun? <a href="/api/auth/view/register" class="text-success fw-bold text-decoration-none">Daftar</a></p>
+        </form>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const alertBox = document.getElementById('alert-box');
+
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alertBox.innerText = data.error;
+                    alertBox.classList.remove('d-none');
+                } else {
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('user_role', data.user.role);
+                    localStorage.setItem('user_name', data.user.name);
+                    
+                    if (data.user.role === 'admin') window.location.href = '/api/admin/dashboard';
+                    else window.location.href = '/api/products/view';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

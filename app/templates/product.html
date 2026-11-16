@@ -12,11 +12,11 @@
         body { font-family: 'Open Sans', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
         .navbar-custom { background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 10px 0; }
         .navbar-brand { font-weight: 700; font-size: 1.5rem; color: var(--primary-color) !important; display: flex; align-items: center; gap: 8px; }
-        
+        .btn-outline-tokped { border: 1px solid var(--primary-color); color: var(--primary-color); font-weight: 600; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px; text-decoration: none; }
+        .btn-solid-tokped { background-color: var(--primary-color); color: white; font-weight: 600; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px; border: none; text-decoration: none; }
         .breadcrumb { font-size: 0.85rem; background: transparent; padding: 0; margin-bottom: 15px; }
         .breadcrumb-item a { color: var(--text-muted); text-decoration: none; }
         .breadcrumb-item a:hover { color: var(--primary-color); }
-
         .detail-card { border: 1px solid #E0E0E0; border-radius: 8px; background: #fff; padding: 20px; }
         .detail-img { height: auto; max-height: 400px; object-fit: contain; width: 100%; border-radius: 8px; }
         .price-tag { font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
@@ -24,11 +24,9 @@
         .btn-buy:hover { background-color: var(--primary-hover); color: white; }
         .btn-secondary-tokped { background-color: #fff; color: var(--primary-color); border: 1px solid var(--primary-color); font-weight: 700; padding: 12px 20px; border-radius: 8px; transition: 0.2s; width: 100%; font-size: 1rem; }
         .btn-secondary-tokped:hover { background-color: #f0fdf4; }
-        
         .similar-card { border: 1px solid #E0E0E0; border-radius: 8px; transition: 0.2s; height: 100%; cursor: pointer; background: #fff; }
         .similar-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
         .similar-img { height: 120px; width: 100%; object-fit: cover; border-radius: 8px 8px 0 0; border-bottom: 1px solid #f0f0f0; }
-
         .footer { background-color: #ffffff; border-top: 1px solid #E0E0E0; padding: 30px 0; margin-top: 50px; font-size: 0.85rem; color: #6D7588; }
     </style>
 </head>
@@ -37,14 +35,21 @@
         <div class="container">
             <a class="navbar-brand" href="/api/products/view"><i class="bi bi-bag-heart-fill"></i> TokoPintar</a>
             <div class="d-flex align-items-center gap-3">
-                <a href="/api/products/wishlist" class="text-dark fs-5 position-relative" title="Wishlist">
-                    <i class="bi bi-heart"></i>
-                </a>
+                <a href="/api/products/wishlist" class="text-dark fs-5 position-relative" title="Wishlist"><i class="bi bi-heart"></i></a>
                 <a href="/api/products/cart" class="text-dark fs-5 position-relative">
                     <i class="bi bi-cart3"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-badge" style="display: none; font-size: 0.6rem;">0</span>
                 </a>
-                <a href="#" class="text-dark fs-5"><i class="bi bi-person-circle"></i></a>
+                <!-- AUTH BUTTONS -->
+                <div id="auth-buttons" class="d-flex gap-2">
+                    <a href="/api/auth/view/login" class="btn-outline-tokped d-none d-md-block">Masuk</a>
+                    <a href="/api/auth/view/register" class="btn-solid-tokped d-none d-md-block">Daftar</a>
+                </div>
+                <div id="user-profile" class="d-none align-items-center gap-2">
+                    <span class="fw-bold" id="nav-username" style="font-size: 0.9rem;"></span>
+                    <a href="/api/admin/dashboard" id="btn-dashboard" class="btn btn-sm btn-warning d-none">Dashboard</a>
+                    <button class="btn btn-sm btn-outline-danger" onclick="logout()">Logout</button>
+                </div>
             </div>
         </div>
     </nav>
@@ -58,42 +63,27 @@
             </ol>
         </nav>
 
-        <div class="text-center py-5" id="loading-detail">
-            <div class="spinner-border text-success" role="status"></div>
-            <p class="mt-3 text-muted">Memuat informasi produk...</p>
-        </div>
-
-        <div class="alert alert-danger d-none" id="error-detail">
-            <h5 class="alert-heading">Gagal Memuat Data!</h5>
-            <p>Pastikan server Python menyala dan ID produk valid.</p>
-        </div>
+        <div class="text-center py-5" id="loading-detail"><div class="spinner-border text-success" role="status"></div><p class="mt-3 text-muted">Memuat informasi produk...</p></div>
+        <div class="alert alert-danger d-none" id="error-detail"><h5 class="alert-heading">Gagal Memuat Data!</h5><p>Pastikan server Python menyala dan ID produk valid.</p></div>
 
         <div class="card detail-card mb-5 d-none" id="main-product-card">
             <div class="row g-4">
-                <div class="col-md-5">
-                    <img id="product-image" src="" class="detail-img" alt="Product Image">
-                </div>
+                <div class="col-md-5"><img id="product-image" src="" class="detail-img" alt="Product Image"></div>
                 <div class="col-md-7">
                     <div class="d-flex flex-column h-100">
                         <div class="d-flex justify-content-between align-items-start">
                             <h4 class="fw-bold mb-1" id="product-name">Nama Produk</h4>
-                            <button class="btn btn-outline-danger" id="btn-wishlist-detail" onclick="toggleWishlistDetail()">
-                                <i class="bi bi-heart"></i>
-                            </button>
+                            <button class="btn btn-outline-danger" id="btn-wishlist-detail" onclick="toggleWishlistDetail()"><i class="bi bi-heart"></i></button>
                         </div>
-                        
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <span class="text-muted" style="font-size: 0.85rem;">Terjual 100+</span>
                             <span class="text-warning fw-bold" style="font-size: 0.85rem;"><i class="bi bi-star-fill"></i> <span id="product-rating"></span></span>
                             <span class="text-muted" style="font-size: 0.85rem;">|</span>
                             <span class="text-muted" style="font-size: 0.85rem;">Stok: <span id="product-stock"></span></span>
                         </div>
-
                         <div class="price-tag mb-4" id="product-price">Rp 0</div>
-                        
                         <h6 class="fw-bold mb-2">Detail Produk</h6>
                         <p class="text-muted mb-4" style="font-size: 0.9rem; line-height: 1.6;" id="product-desc">Deskripsi produk...</p>
-                        
                         <div class="mt-auto d-flex flex-column flex-md-row gap-2">
                             <button class="btn btn-secondary-tokped" id="btn-add-cart" onclick="addToCart()"><i class="bi bi-cart-plus me-2"></i> Masukkan Keranjang</button>
                             <button class="btn btn-buy">Beli Langsung</button>
@@ -103,20 +93,13 @@
             </div>
         </div>
 
-        <!-- ULASAN PEMBELI -->
         <div class="card detail-card mb-5">
             <h5 class="fw-bold mb-3">Ulasan Pembeli</h5>
             <div id="review-list" class="row g-3"></div>
         </div>
 
-        <!-- SECTION AI REKOMENDASI -->
         <div class="mt-4 d-none" id="similar-section">
-            <div class="d-flex align-items-center mb-1">
-                <h5 class="fw-bold mb-0 d-flex align-items-center">
-                    <i class="bi bi-stars text-warning me-2"></i> Produk Lainnya Untukmu
-                    <span class="badge bg-success ms-2" style="font-size: 0.7rem;">AI Recommendation</span>
-                </h5>
-            </div>
+            <div class="d-flex align-items-center mb-1"><h5 class="fw-bold mb-0 d-flex align-items-center"><i class="bi bi-stars text-warning me-2"></i> Produk Lainnya Untukmu <span class="badge bg-success ms-2" style="font-size: 0.7rem;">AI Recommendation</span></h5></div>
             <p class="text-muted mb-3" style="font-size: 0.85rem;">Berdasarkan kemiripan kategori dan deskripsi produk yang sedang Anda lihat.</p>
             <div class="row g-3" id="similar-list"></div>
         </div>
@@ -124,22 +107,31 @@
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body" id="toast-message">Berhasil!</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
+            <div class="d-flex"><div class="toast-body" id="toast-message">Berhasil!</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="container text-center">
-            <h5 class="fw-bold text-success mb-2"><i class="bi bi-bag-heart-fill"></i> TokoPintar</h5>
-            <p class="mb-0">&copy; 2026 TokoPintar. Hak Cipta Dilindungi.</p>
-        </div>
-    </footer>
+    <footer class="footer"><div class="container text-center"><h5 class="fw-bold text-success mb-2"><i class="bi bi-bag-heart-fill"></i> TokoPintar</h5><p class="mb-0">&copy; 2026 TokoPintar. Hak Cipta Dilindungi.</p></div></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // --- LOGIKA LOGIN NAVBAR ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('user_role');
+            const name = localStorage.getItem('user_name');
+            if (token && name) {
+                document.getElementById('auth-buttons').classList.add('d-none');
+                document.getElementById('user-profile').classList.remove('d-none');
+                document.getElementById('user-profile').classList.add('d-flex');
+                document.getElementById('nav-username').innerText = `Halo, ${name}`;
+                if (role === 'admin') document.getElementById('btn-dashboard').classList.remove('d-none');
+            }
+            updateCartBadge();
+        });
+
+        function logout() { localStorage.removeItem('token'); localStorage.removeItem('user_role'); localStorage.removeItem('user_name'); window.location.reload(); }
+
         const productId = "{{ product_id }}";
         let currentProduct = null;
 
@@ -158,162 +150,78 @@
             if (totalItems > 0) { badge.style.display = 'inline-block'; badge.innerText = totalItems; } 
             else { badge.style.display = 'none'; }
         }
-        document.addEventListener('DOMContentLoaded', updateCartBadge);
 
-        // WISHLIST LOGIC
         function getWishlist() { return JSON.parse(localStorage.getItem('wishlist')) || []; }
-        
         function toggleWishlistDetail() {
             if (!currentProduct) return;
-            let wishlist = getWishlist();
-            let index = wishlist.findIndex(item => item.id == currentProduct.id);
-            let btn = document.getElementById('btn-wishlist-detail');
-
-            if (index > -1) {
-                wishlist.splice(index, 1);
-                btn.classList.remove('active');
-                btn.innerHTML = '<i class="bi bi-heart"></i>';
-                showToast('Dihapus dari Wishlist', false);
-            } else {
-                wishlist.push({ 
-                    id: currentProduct.id, 
-                    name: currentProduct.name, 
-                    price: currentProduct.price, 
-                    image: `https://picsum.photos/seed/${currentProduct.id}/300/200` 
-                });
-                btn.classList.add('active');
-                btn.innerHTML = '<i class="bi bi-heart-fill"></i>';
-                showToast('Ditambahkan ke Wishlist');
-            }
+            let wishlist = getWishlist(); let index = wishlist.findIndex(item => item.id == currentProduct.id); let btn = document.getElementById('btn-wishlist-detail');
+            if (index > -1) { wishlist.splice(index, 1); btn.classList.remove('active'); btn.innerHTML = '<i class="bi bi-heart"></i>'; showToast('Dihapus dari Wishlist', false); } 
+            else { wishlist.push({ id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, image: `https://picsum.photos/seed/${currentProduct.id}/300/200` }); btn.classList.add('active'); btn.innerHTML = '<i class="bi bi-heart-fill"></i>'; showToast('Ditambahkan ke Wishlist'); }
             localStorage.setItem('wishlist', JSON.stringify(wishlist));
         }
-
         function checkWishlistDetail() {
-            if (!currentProduct) return;
-            let wishlist = getWishlist();
-            let btn = document.getElementById('btn-wishlist-detail');
-            if (wishlist.some(item => item.id == currentProduct.id)) {
-                btn.classList.add('active');
-                btn.innerHTML = '<i class="bi bi-heart-fill"></i>';
-            }
+            if (!currentProduct) return; let wishlist = getWishlist(); let btn = document.getElementById('btn-wishlist-detail');
+            if (wishlist.some(item => item.id == currentProduct.id)) { btn.classList.add('active'); btn.innerHTML = '<i class="bi bi-heart-fill"></i>'; }
         }
 
-        // 1. Fetch Data Produk
-        fetch(`/api/products/${productId}`)
-            .then(res => res.json())
-            .then(product => {
-                currentProduct = product;
-                document.getElementById('loading-detail').classList.add('d-none');
-                document.getElementById('main-product-card').classList.remove('d-none');
+        fetch(`/api/products/${productId}`).then(res => res.json()).then(product => {
+            currentProduct = product;
+            document.getElementById('loading-detail').classList.add('d-none');
+            document.getElementById('main-product-card').classList.remove('d-none');
+            const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(product.price || 0);
+            let kategoriKunci = product.category ? product.category.split('|')[0].replace('_', ' ') : 'Umum';
+            document.getElementById('product-name').innerText = product.name || "Tanpa Nama";
+            document.getElementById('product-price').innerText = price;
+            document.getElementById('product-rating').innerText = product.rating || 0;
+            document.getElementById('product-stock').innerText = product.stock || 0;
+            document.getElementById('product-desc').innerText = product.description || "Tidak ada deskripsi.";
+            document.getElementById('product-image').src = `https://picsum.photos/seed/${product.id}/800/600`;
+            document.getElementById('breadcrumb-category').innerText = kategoriKunci;
+            document.getElementById('breadcrumb-name').innerText = product.name || "Produk";
+            checkWishlistDetail();
+            fetch(`/api/products/${productId}/view`, { method: 'POST' }).catch(() => {});
+            let recent = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
+            recent = recent.filter(item => item.id != product.id);
+            recent.unshift({ id: product.id, name: product.name, price: product.price, image: `https://picsum.photos/seed/${product.id}/300/200` });
+            localStorage.setItem('recentlyViewed', JSON.stringify(recent.slice(0, 4)));
+        }).catch(err => {
+            document.getElementById('loading-detail').classList.add('d-none');
+            document.getElementById('error-detail').classList.remove('d-none');
+        });
 
-                const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(product.price || 0);
-                let kategoriKunci = product.category ? product.category.split('|')[0].replace('_', ' ') : 'Umum';
-                
-                document.getElementById('product-name').innerText = product.name || "Tanpa Nama";
-                document.getElementById('product-price').innerText = price;
-                document.getElementById('product-rating').innerText = product.rating || 0;
-                document.getElementById('product-stock').innerText = product.stock || 0;
-                document.getElementById('product-desc').innerText = product.description || "Tidak ada deskripsi.";
-                document.getElementById('product-image').src = `https://picsum.photos/seed/${product.id}/800/600`;
-                
-                document.getElementById('breadcrumb-category').innerText = kategoriKunci;
-                document.getElementById('breadcrumb-name').innerText = product.name || "Produk";
-
-                checkWishlistDetail();
-
-                fetch(`/api/products/${productId}/view`, { method: 'POST' }).catch(() => {});
-
-                let recent = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
-                recent = recent.filter(item => item.id != product.id);
-                recent.unshift({
-                    id: product.id, name: product.name, price: product.price,
-                    image: `https://picsum.photos/seed/${product.id}/300/200`
+        fetch(`/api/products/${productId}/reviews`).then(res => res.json()).then(data => {
+            const list = document.getElementById('review-list');
+            if (data.data && data.data.length > 0) {
+                data.data.forEach(review => {
+                    let stars = ''; for(let i=0; i<5; i++) { stars += i < review.rating ? '<i class="bi bi-star-fill text-warning"></i>' : '<i class="bi bi-star text-muted"></i>'; }
+                    list.innerHTML += `<div class="col-md-6"><div class="p-3 border rounded h-100"><div class="d-flex justify-content-between mb-2"><strong>${review.user}</strong><div>${stars}</div></div><p class="mb-0 text-muted" style="font-size: 0.9rem;">"${review.comment}"</p></div></div>`;
                 });
-                localStorage.setItem('recentlyViewed', JSON.stringify(recent.slice(0, 4)));
-            })
-            .catch(err => {
-                document.getElementById('loading-detail').classList.add('d-none');
-                document.getElementById('error-detail').classList.remove('d-none');
-            });
+            } else { list.innerHTML = '<div class="col-12"><p class="text-muted">Belum ada ulasan untuk produk ini.</p></div>'; }
+        });
 
-        // 2. Fetch Ulasan
-        fetch(`/api/products/${productId}/reviews`)
-            .then(res => res.json())
-            .then(data => {
-                const list = document.getElementById('review-list');
-                if (data.data && data.data.length > 0) {
-                    data.data.forEach(review => {
-                        let stars = '';
-                        for(let i=0; i<5; i++) {
-                            stars += i < review.rating ? '<i class="bi bi-star-fill text-warning"></i>' : '<i class="bi bi-star text-muted"></i>';
-                        }
-                        list.innerHTML += `
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded h-100">
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <strong>${review.user}</strong>
-                                        <div>${stars}</div>
-                                    </div>
-                                    <p class="mb-0 text-muted" style="font-size: 0.9rem;">"${review.comment}"</p>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    list.innerHTML = '<div class="col-12"><p class="text-muted">Belum ada ulasan untuk produk ini.</p></div>';
-                }
-            }).catch(err => console.log("Gagal memuat ulasan."));
-
-        // 3. Tambah ke Keranjang
         function addToCart() {
             if (!currentProduct) return;
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             let existingItem = cart.find(item => item.id == currentProduct.id);
-
-            if (existingItem) {
-                existingItem.qty += 1;
-            } else {
-                cart.push({
-                    id: currentProduct.id, name: currentProduct.name, price: currentProduct.price,
-                    image: `https://picsum.photos/seed/${currentProduct.id}/300/200`, qty: 1
-                });
-            }
-
+            if (existingItem) { existingItem.qty += 1; } 
+            else { cart.push({ id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, image: `https://picsum.photos/seed/${currentProduct.id}/300/200`, qty: 1 }); }
             localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartBadge();
-            showToast('Berhasil ditambahkan ke keranjang!');
-            
-            const btn = document.getElementById('btn-add-cart');
-            const originalText = btn.innerHTML;
+            updateCartBadge(); showToast('Berhasil ditambahkan ke keranjang!');
+            const btn = document.getElementById('btn-add-cart'); const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Ditambahkan!';
             setTimeout(() => { btn.innerHTML = originalText; }, 2000);
         }
 
-        // 4. Fetch AI Similar
-        fetch(`/api/products/${productId}/similar`)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.data && data.data.length > 0) {
-                    document.getElementById('similar-section').classList.remove('d-none');
-                    const list = document.getElementById('similar-list');
-                    data.data.forEach(item => {
-                        const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.price || 0);
-                        list.innerHTML += `
-                            <div class="col-6 col-md-3">
-                                <a href="/api/products/view/${item.id}" class="text-decoration-none">
-                                    <div class="card similar-card">
-                                        <img src="https://picsum.photos/seed/${item.id}/300/200" class="similar-img" alt="${item.name}" loading="lazy">
-                                        <div class="card-body p-3">
-                                            <h6 class="fw-semibold text-truncate" style="font-size: 0.9rem;" title="${item.name}">${item.name}</h6>
-                                            <p class="text-dark fw-bold mt-auto mb-0" style="font-size: 1rem;">${price}</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        `;
-                    });
-                }
-            }).catch(err => console.log("AI Offline."));
+        fetch(`/api/products/${productId}/similar`).then(res => res.json()).then(data => {
+            if (data && data.data && data.data.length > 0) {
+                document.getElementById('similar-section').classList.remove('d-none');
+                const list = document.getElementById('similar-list');
+                data.data.forEach(item => {
+                    const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.price || 0);
+                    list.innerHTML += `<div class="col-6 col-md-3"><a href="/api/products/view/${item.id}" class="text-decoration-none"><div class="card similar-card"><img src="https://picsum.photos/seed/${item.id}/300/200" class="similar-img" alt="${item.name}" loading="lazy"><div class="card-body p-3"><h6 class="fw-semibold text-truncate" style="font-size: 0.9rem;" title="${item.name}">${item.name}</h6><p class="text-dark fw-bold mt-auto mb-0" style="font-size: 1rem;">${price}</p></div></div></a></div>`;
+                });
+            }
+        }).catch(err => console.log("AI Offline."));
     </script>
 </body>
 </html>
