@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - TokoPintar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary-color: #03AC0E; --bg-color: #F7F7F7; --text-dark: #212121; --sidebar-bg: #1e293b; }
+        body { font-family: 'Open Sans', sans-serif; background-color: var(--bg-color); color: var(--text-dark); overflow-x: hidden; }
+        
+        .sidebar { height: 100vh; width: 250px; position: fixed; top: 0; left: 0; background-color: var(--sidebar-bg); padding-top: 20px; color: white; z-index: 1000; }
+        .sidebar h4 { text-align: center; color: var(--primary-color); font-weight: 700; margin-bottom: 30px; }
+        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 1rem; color: #cbd5e1; display: block; transition: 0.3s; cursor: pointer;}
+        .sidebar a:hover, .sidebar a.active { background-color: #334155; color: white; border-left: 4px solid var(--primary-color); }
+        .sidebar a i { margin-right: 10px; }
+
+        .main-content { margin-left: 250px; padding: 30px; }
+        .stat-card { border-radius: 12px; border: none; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .bg-gradient-green { background: linear-gradient(135deg, #03AC0E, #027A0A); }
+        .bg-gradient-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .bg-gradient-orange { background: linear-gradient(135deg, #f59e0b, #b45309); }
+        .bg-gradient-red { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        
+        .card-table { border-radius: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .table th { color: #64748b; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+        .badge-low-stock { background-color: #fee2e2; color: #ef4444; font-weight: 700; }
+        .nav-tabs .nav-link { color: var(--text-dark); font-weight: 600; border: none; border-bottom: 3px solid transparent; }
+        .nav-tabs .nav-link.active { color: var(--primary-color); border-bottom: 3px solid var(--primary-color); background: transparent; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h4><i class="bi bi-bag-heart-fill"></i> TokoPintar</h4>
+        <a onclick="switchTab('ringkasan')" class="active" id="tab-link-ringkasan"><i class="bi bi-speedometer2"></i> Ringkasan</a>
+        <a onclick="switchTab('kelola')" id="tab-link-kelola"><i class="bi bi-box-seam"></i> Kelola Produk</a>
+        <a href="/api/products/view"><i class="bi bi-shop"></i> Lihat Toko</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        
+        <!-- TAB 1: RINGKASAN -->
+        <div id="tab-ringkasan">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold mb-0">Ringkasan Toko</h3>
+                <button class="btn btn-outline-success btn-sm" onclick="loadStats()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+            </div>
+
+            <!-- Kartu Statistik -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card bg-gradient-green p-4">
+                        <h6 class="text-white-50">Total Pendapatan</h6>
+                        <h3 class="fw-bold mb-0" id="stat-revenue">Rp 0</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card bg-gradient-blue p-4">
+                        <h6 class="text-white-50">Total Pesanan</h6>
+                        <h3 class="fw-bold mb-0" id="stat-orders">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card bg-gradient-orange p-4">
+                        <h6 class="text-white-50">Produk Terdaftar</h6>
+                        <h3 class="fw-bold mb-0" id="stat-products">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card bg-gradient-red p-4">
+                        <h6 class="text-white-50">AI CTR (Click Rate)</h6>
+                        <h3 class="fw-bold mb-0" id="stat-ctr">0%</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Tabel Stok Menipis -->
+                <div class="col-lg-6">
+                    <div class="card card-table h-100">
+                        <div class="card-header bg-white border-0 pt-4 pb-0">
+                            <h5 class="fw-bold"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i> Peringatan Stok Menipis</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                <table class="table table-hover align-middle">
+                                    <thead><tr><th>Nama Produk</th><th>Stok</th></tr></thead>
+                                    <tbody id="low-stock-table"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafik Produk Terlaris -->
+                <div class="col-lg-6">
+                    <div class="card card-table h-100">
+                        <div class="card-header bg-white border-0 pt-4 pb-0">
+                            <h5 class="fw-bold"><i class="bi bi-graph-up-arrow text-success me-2"></i> 5 Produk Terlaris</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topProductsChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tabel Pesanan Terbaru -->
+                <div class="col-12 mt-4">
+                    <div class="card card-table">
+                        <div class="card-header bg-white border-0 pt-4 pb-0">
+                            <h5 class="fw-bold"><i class="bi bi-receipt text-primary me-2"></i> Pesanan Terbaru</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-hover align-middle">
+                                <thead><tr><th>Order ID</th><th>Total</th><th>Status</th><th>Waktu</th></tr></thead>
+                                <tbody id="recent-orders-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: KELOLA PRODUK (CRUD) -->
+        <div id="tab-kelola" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold mb-0">Kelola Produk</h3>
+                <button class="btn btn-success" onclick="openModal('add')"><i class="bi bi-plus-circle me-2"></i> Tambah Produk</button>
+            </div>
+
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Produk</th>
+                                    <th>Kategori</th>
+                                    <th>Harga</th>
+                                    <th>Stok</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-product-table">
+                                <!-- Data produk akan dimuat di sini -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Paginasi Admin -->
+                    <nav class="mt-3 d-flex justify-content-end">
+                        <ul class="pagination pagination-sm" id="admin-pagination">
+                            <!-- Paginasi akan dimuat di sini -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL UNTUK TAMBAH / EDIT PRODUK -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Tambah Produk Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Produk</label>
+                            <input type="text" class="form-control" id="productName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kategori</label>
+                            <input type="text" class="form-control" id="productCategory">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Harga (Rp)</label>
+                                <input type="number" class="form-control" id="productPrice" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Stok</label>
+                                <input type="number" class="form-control" id="productStock" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success" onclick="saveProduct()">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let myChart = null; // Variabel untuk menyimpan instance Chart.js
+        let adminCurrentPage = 1;
+        let adminTotalPages = 1;
+        const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+
+        // Format Rupiah
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+        };
+
+        // --- NAVIGASI TAB ---
+        function switchTab(tab) {
+            document.getElementById('tab-ringkasan').style.display = 'none';
+            document.getElementById('tab-kelola').style.display = 'none';
+            document.getElementById('tab-link-ringkasan').classList.remove('active');
+            document.getElementById('tab-link-kelola').classList.remove('active');
+
+            document.getElementById('tab-' + tab).style.display = 'block';
+            document.getElementById('tab-link-' + tab).classList.add('active');
+
+            if(tab === 'kelola') loadAdminProducts(); // Load tabel jika pindah ke tab kelola
+        }
+
+        // --- LOAD STATISTIK (TAB 1) ---
+        function loadStats() {
+            fetch('/api/admin/stats')
+                .then(res => res.json())
+                .then(response => {
+                    if (response.status === 'success') {
+                        const data = response.data;
+                        document.getElementById('stat-revenue').innerText = formatRupiah(data.total_revenue);
+                        document.getElementById('stat-orders').innerText = data.total_orders;
+                        document.getElementById('stat-products').innerText = data.total_products;
+                        document.getElementById('stat-ctr').innerText = data.ctr_percentage + '%';
+
+                        // Render Tabel Stok
+                        const tbody = document.getElementById('low-stock-table');
+                        tbody.innerHTML = data.low_stock.length === 0 ? '<tr><td colspan="2" class="text-center text-success">Stok aman.</td></tr>' : '';
+                        data.low_stock.forEach(p => {
+                            tbody.innerHTML += `<tr><td class="text-truncate" style="max-width: 150px;">${p.name}</td><td><span class="badge badge-low-stock px-3 py-2">${p.stock}</span></td></tr>`;
+                        });
+
+                        // Render Tabel Pesanan
+                        const orderTbody = document.getElementById('recent-orders-table');
+                        orderTbody.innerHTML = data.recent_orders.length === 0 ? '<tr><td colspan="4" class="text-center text-muted">Belum ada pesanan.</td></tr>' : '';
+                        data.recent_orders.forEach(o => {
+                            orderTbody.innerHTML += `
+                                <tr>
+                                    <td>#TRX-${o.id}</td>
+                                    <td class="fw-bold text-success">${formatRupiah(o.total)}</td>
+                                    <td><span class="badge bg-warning text-dark">${o.status}</span></td>
+                                    <td>${o.date}</td>
+                                </tr>
+                            `;
+                        });
+
+                        // Render Grafik
+                        const ctx = document.getElementById('topProductsChart').getContext('2d');
+                        if (myChart) myChart.destroy();
+                        
+                        let chartLabels = data.top_products.map(p => p.name);
+                        let chartData = data.top_products.map(p => p.total_sold);
+                        if (chartLabels.length === 0) { chartLabels = ['Belum ada']; chartData = [0]; }
+
+                        myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: chartLabels,
+                                datasets: [{ label: 'Terjual', data: chartData, backgroundColor: '#03AC0E', borderRadius: 6 }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                            }
+                        });
+                    }
+                });
+        }
+
+        // --- LOAD DATA PRODUK (TAB 2) ---
+        function loadAdminProducts(page = 1) {
+            adminCurrentPage = page;
+            const tbody = document.getElementById('admin-product-table');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Memuat data...</td></tr>';
+
+            fetch(`/api/admin/products?page=${page}&per_page=10`)
+                .then(res => res.json())
+                .then(response => {
+                    tbody.innerHTML = '';
+                    response.data.forEach(p => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><span class="text-muted">#${p.id}</span></td>
+                                <td class="text-truncate" style="max-width: 200px;">${p.name}</td>
+                                <td>${p.category || '-'}</td>
+                                <td class="fw-bold">${formatRupiah(p.price)}</td>
+                                <td>${p.stock}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="openModal('edit', ${p.id}, '${p.name.replace(/'/g, "\\'")}', '${p.category}', ${p.price}, ${p.stock})"><i class="bi bi-pencil-square"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger ms-1" onclick="deleteProduct(${p.id})"><i class="bi bi-trash"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    adminTotalPages = response.meta.total_pages;
+                    renderAdminPagination();
+                });
+        }
+
+        function renderAdminPagination() {
+            const pag = document.getElementById('admin-pagination');
+            pag.innerHTML = '';
+            if (adminTotalPages <= 1) return;
+
+            for (let i = 1; i <= adminTotalPages; i++) {
+                pag.innerHTML += `<li class="page-item ${i === adminCurrentPage ? 'active' : ''}"><button class="page-link" onclick="loadAdminProducts(${i})">${i}</button></li>`;
+            }
+        }
+
+        // --- MODAL & SIMPAN PRODUK ---
+        function openModal(mode, id = null, name = '', category = '', price = 0, stock = 0) {
+            document.getElementById('productId').value = id || '';
+            document.getElementById('productName').value = name;
+            document.getElementById('productCategory').value = category;
+            document.getElementById('productPrice').value = price;
+            document.getElementById('productStock').value = stock;
+            
+            document.getElementById('modalTitle').innerText = mode === 'edit' ? 'Edit Produk' : 'Tambah Produk Baru';
+            productModal.show();
+        }
+
+        function saveProduct() {
+            const id = document.getElementById('productId').value;
+            const data = {
+                name: document.getElementById('productName').value,
+                category: document.getElementById('productCategory').value,
+                price: document.getElementById('productPrice').value,
+                stock: document.getElementById('productStock').value
+            };
+
+            const url = id ? `/api/admin/products/${id}` : '/api/admin/products';
+            const method = id ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.error) {
+                    alert("Gagal: " + res.error);
+                } else {
+                    productModal.hide();
+                    loadAdminProducts(adminCurrentPage); // Refresh tabel
+                    loadStats(); // Refresh angka di tab 1
+                    alert(id ? "Produk berhasil diupdate!" : "Produk berhasil ditambahkan!");
+                }
+            });
+        }
+
+        function deleteProduct(id) {
+            if (confirm("Yakin ingin menghapus produk ini? Semua interaksi terkait akan dihapus.")) {
+                fetch(`/api/admin/products/${id}`, { method: 'DELETE' })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.error) alert("Gagal: " + res.error);
+                        else {
+                            loadAdminProducts(adminCurrentPage);
+                            loadStats();
+                        }
+                    });
+            }
+        }
+
+        // Load awal
+        document.addEventListener('DOMContentLoaded', loadStats);
+    </script>
+</body>
+</html>
