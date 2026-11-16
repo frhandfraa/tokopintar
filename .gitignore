@@ -1,3 +1,6 @@
-# Abaikan file dataset
-*.csv
-*.json
+venv/ 
+__pycache__/ 
+.env 
+data/*.csv 
+data/*.json 
+ai_service/models/*.pkl 
