@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang TokoPintar: Ketahui Lebih Banyak Tentang Kami</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --tokped-green: #03AC0E;
+            --tokped-dark-green: #006608;
+            --tokped-mint: #E8F8EA;
+            --tokped-soft-bg: #F3F4F5;
+            --text-main: #212121;
+            --text-sub: #6D7588;
+            --border-line: #E5E7E9;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text-main);
+            background-color: #FFFFFF;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* CORPORATE NAVBAR ALA TOKOPEDIA ABOUT */
+        .top-corp-bar {
+            background: #F3F4F5;
+            font-size: 0.76rem;
+            color: var(--text-sub);
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-line);
+        }
+        .navbar-corp {
+            background: #FFFFFF;
+            border-bottom: 1px solid var(--border-line);
+            padding: 14px 0;
+            z-index: 1030;
+        }
+        .brand-corp {
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--tokped-green) !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.6px;
+        }
+        .corp-nav-item {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.88rem;
+            text-decoration: none;
+            padding: 6px 4px;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .corp-nav-item:hover, .corp-nav-item.active {
+            color: var(--tokped-green);
+            border-bottom-color: var(--tokped-green);
+        }
+
+        .btn-tokped-primary {
+            background-color: var(--tokped-green);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.88rem;
+            padding: 10px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .btn-tokped-primary:hover {
+            background-color: #02960C;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .btn-tokped-ghost {
+            border: 1.5px solid var(--tokped-green);
+            color: var(--tokped-green);
+            font-weight: 700;
+            font-size: 0.88rem;
+            padding: 9px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .btn-tokped-ghost:hover {
+            background-color: var(--tokped-mint);
+            color: var(--tokped-green);
+        }
+
+        /* HERO FULL-BLEED DENGAN SUPERGRAPHIC GEOMETRIS */
+        .hero-tokped-about {
+            position: relative;
+            background: linear-gradient(135deg, #007A0A 0%, #03AC0E 65%, #16C623 100%);
+            color: #FFFFFF;
+            padding: 95px 0 110px;
+            overflow: hidden;
+        }
+        .hero-supergraphic-circle-1 {
+            position: absolute;
+            width: 520px;
+            height: 520px;
+            border-radius: 50%;
+            border: 58px solid rgba(255, 255, 255, 0.09);
+            top: -160px;
+            right: -120px;
+            pointer-events: none;
+        }
+        .hero-supergraphic-circle-2 {
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.07);
+            bottom: -140px;
+            right: 22%;
+            pointer-events: none;
+        }
+        .hero-curve-bottom {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            line-height: 0;
+        }
+
+        /* SECTION HEADERS */
+        .section-kicker {
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            color: var(--tokped-green);
+            margin-bottom: 10px;
+            display: block;
+        }
+        .section-headline {
+            font-size: clamp(1.75rem, 3vw, 2.45rem);
+            font-weight: 800;
+            line-height: 1.25;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+        .section-paragraph {
+            font-size: 0.98rem;
+            line-height: 1.8;
+            color: var(--text-sub);
+        }
+
+        /* PETA INDONESIA & TANTANGAN KAMI */
+        .indonesia-map-card {
+            background: #F8FAFC;
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid var(--border-line);
+            position: relative;
+        }
+        .map-pulse-dot {
+            animation: dotBlink 2s infinite alternate;
+        }
+        @keyframes dotBlink {
+            0% { opacity: 0.35; r: 4; }
+            100% { opacity: 1; r: 7; }
+        }
+
+        /* KINETIC MARQUEE "OUR MISSION" */
+        .mission-wrapper {
+            position: relative;
+            padding: 70px 0;
+            background: #FFFFFF;
+            overflow: hidden;
+        }
+        .marquee-bg-text {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            white-space: nowrap;
+            font-size: 5.5rem;
+            font-weight: 800;
+            color: rgba(3, 172, 14, 0.06);
+            letter-spacing: 4px;
+            user-select: none;
+            pointer-events: none;
+            animation: marqueeSlide 24s linear infinite;
+        }
+        @keyframes marqueeSlide {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* METRIK BESAR ALA TOKOPEDIA ABOUT */
+        .stats-clean-section {
+            padding: 65px 0;
+            border-top: 1px solid var(--border-line);
+            border-bottom: 1px solid var(--border-line);
+            background: #FAFAFA;
+        }
+        .stat-big-num {
+            font-size: clamp(2.1rem, 3.6vw, 3rem);
+            font-weight: 800;
+            color: var(--tokped-green);
+            line-height: 1.1;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+        .stat-big-desc {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* BISNIS KAMI (3 KARTU EKOSISTEM) */
+        .business-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-line);
+            border-radius: 16px;
+            padding: 32px 26px;
+            height: 100%;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+            transition: all 0.25s ease;
+        }
+        .business-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 34px rgba(3, 172, 14, 0.1);
+            border-color: var(--tokped-green);
+        }
+        .business-icon-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: var(--tokped-mint);
+            color: var(--tokped-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.65rem;
+            margin-bottom: 22px;
+        }
+
+        /* DAMPAK KAMI (4 KARTU DENGAN GARIS HIJAU ATAS) */
+        .impact-box {
+            background: #FFFFFF;
+            border: 1px solid var(--border-line);
+            border-top: 4px solid var(--tokped-green);
+            border-radius: 14px;
+            padding: 26px;
+            height: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            transition: 0.2s;
+        }
+        .impact-box:hover {
+            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+        }
+
+        /* SUPERGRAPHIC GREEN BANNER BAWAH */
+        .bottom-supergraphic {
+            position: relative;
+            background: linear-gradient(110deg, #007A0A 0%, #03AC0E 100%);
+            border-radius: 20px;
+            padding: 64px 42px;
+            color: #FFFFFF;
+            overflow: hidden;
+        }
+        .bottom-supergraphic::after {
+            content: '';
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            border: 48px solid rgba(255, 255, 255, 0.1);
+            right: -90px;
+            bottom: -140px;
+            pointer-events: none;
+        }
+
+        /* FOOTER EDITORIAL */
+        .footer-corp {
+            background: #FFFFFF;
+            border-top: 1px solid var(--border-line);
+            padding: 55px 0 30px;
+            margin-top: 75px;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+        .footer-corp h6 {
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 14px;
+            font-size: 0.9rem;
+        }
+        .footer-corp ul { list-style: none; padding: 0; margin: 0; }
+        .footer-corp ul li { margin-bottom: 9px; }
+        .footer-corp ul li a { color: var(--text-sub); text-decoration: none; }
+        .footer-corp ul li a:hover { color: var(--tokped-green); }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-corp-bar d-none d-md-block">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div><i class="bi bi-bag-heart text-success"></i> Ekosistem E-Commerce Cerdas Berbasis AI & Live GPS</div>
+            <div class="d-flex gap-3">
+                <a href="/api/products/view" class="text-muted text-decoration-none">Beranda Belanja</a>
+                <a href="/api/admin/dashboard" class="text-muted text-decoration-none">Mulai Berjualan</a>
+                <a href="/api/orders/view" class="text-muted text-decoration-none">Lacak Pesanan</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CORPORATE NAVBAR -->
+    <nav class="navbar navbar-corp sticky-top">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="brand-corp" href="/api/products/view">
+                <i class="bi bi-bag-heart-fill"></i> TokoPintar
+            </a>
+            <div class="d-none d-md-flex align-items-center gap-4">
+                <a href="#tantangan" class="corp-nav-item active">Tentang Kami</a>
+                <a href="#misi" class="corp-nav-item">Misi Kami</a>
+                <a href="#bisnis" class="corp-nav-item">Bisnis Kami</a>
+                <a href="#dampak" class="corp-nav-item">Dampak Kami</a>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/api/auth/view/register" class="btn-tokped-ghost d-none d-sm-inline-flex">Mulai Berjualan</a>
+                <a href="/api/products/view" class="btn-tokped-primary">Belanja Sekarang</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION HIJAU SUPERGRAPHIC -->
+    <section class="hero-tokped-about">
+        <div class="hero-supergraphic-circle-1"></div>
+        <div class="hero-supergraphic-circle-2"></div>
+
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row align-items-center">
+                <div class="col-lg-8" data-aos="fade-up" data-aos-duration="750">
+                    <div class="text-uppercase fw-bold small mb-2" style="letter-spacing: 2px; opacity: 0.9;">
+                        Tentang TokoPintar
+                    </div>
+                    <h1 class="display-5 fw-bold mb-3" style="line-height: 1.2;">
+                        Mencapai Pemerataan Ekonomi Digital Melalui Teknologi Cerdas
+                    </h1>
+                    <p class="fs-6 mb-4" style="opacity: 0.92; max-width: 640px; line-height: 1.75;">
+                        Kami membangun infrastruktur perdagangan yang menyatukan kecerdasan buatan (AI), pemetaan lokasi presisi Google Live GPS, dan transparansi ulasan visual untuk memberdayakan penjual maupun pembeli di seluruh Indonesia.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#misi" class="btn btn-light text-success fw-bold px-4 py-2 rounded-3">Pelajari Misi Kami</a>
+                        <a href="/api/products/view" class="btn btn-outline-light fw-bold px-4 py-2 rounded-3">Jelajahi Marketplace</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CURVE SEPARATOR -->
+        <div class="hero-curve-bottom">
+            <svg viewBox="0 0 1440 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 54H1440V0C1120 48 320 48 0 0V54Z" fill="#FFFFFF"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- TANTANGAN KAMI + VISUAL PETA KEPULAUAN -->
+    <section id="tantangan" class="py-5 my-3">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <span class="section-kicker">Tantangan Kami</span>
+                    <h2 class="section-headline mb-3">Kesempatan yang tidak merata di Indonesia</h2>
+                    <p class="section-paragraph mb-0">
+                        Indonesia sebagai negara kepulauan terbesar di dunia memiliki tantangan tersendiri dalam pemerataan akses pasar dan infrastruktur pengiriman. Pelaku usaha di daerah sering kesulitan menjangkau konsumen luas, sementara pembeli membutuhkan jaminan keaslian produk serta ketepatan titik pengantaran hingga ke depan pintu rumah.
+                    </p>
+                </div>
+
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="indonesia-map-card text-center">
+                        <!-- ILUSTRASI SVG JARINGAN KEPULAUAN INDONESIA -->
+                        <svg viewBox="0 0 600 230" class="w-100" style="max-height: 220px;" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Sumatera -->
+                            <path d="M45 55 L95 95 L125 140 L105 155 L65 110 L35 70 Z" fill="#D1FAE5" stroke="#03AC0E" stroke-width="2"/>
+                            <!-- Jawa -->
+                            <path d="M135 168 L235 178 L232 192 L132 182 Z" fill="#D1FAE5" stroke="#03AC0E" stroke-width="2"/>
+                            <!-- Kalimantan -->
+                            <path d="M215 65 L285 58 L305 115 L255 135 L210 112 Z" fill="#D1FAE5" stroke="#03AC0E" stroke-width="2"/>
+                            <!-- Sulawesi -->
+                            <path d="M335 72 L378 68 L368 112 L392 135 L350 142 L332 105 Z" fill="#D1FAE5" stroke="#03AC0E" stroke-width="2"/>
+                            <!-- Bali & Nusa Tenggara -->
+                            <path d="M248 184 L345 190 L342 198 L246 192 Z" fill="#D1FAE5" stroke="#03AC0E" stroke-width="2"/>
+                            <!-- Papua -->
+                            <path d="M455 95 L555 108 L565 165 L495 162 L450 128 Z" fill="#D1FAE5" stroke="#03AC0E" stroke-width="2"/>
+
+                            <!-- Garis Koneksi Digital Antar Pulau -->
+                            <path d="M88 115 Q160 95 185 175" stroke="#03AC0E" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                            <path d="M185 175 Q225 120 258 98" stroke="#03AC0E" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                            <path d="M258 98 Q310 85 355 102" stroke="#03AC0E" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                            <path d="M355 102 Q430 92 505 130" stroke="#03AC0E" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+
+                            <!-- Titik Kota Terhubung -->
+                            <circle cx="88" cy="115" r="5" fill="#03AC0E" class="map-pulse-dot"/>
+                            <circle cx="185" cy="175" r="5" fill="#03AC0E" class="map-pulse-dot"/>
+                            <circle cx="258" cy="98" r="5" fill="#03AC0E" class="map-pulse-dot"/>
+                            <circle cx="355" cy="102" r="5" fill="#03AC0E" class="map-pulse-dot"/>
+                            <circle cx="505" cy="130" r="5" fill="#03AC0E" class="map-pulse-dot"/>
+                        </svg>
+                        <div class="small fw-bold text-success mt-2">
+                            <i class="bi bi-broadcast"></i> Menghubungkan Pembeli & Penjual Lintas Daerah secara Real-Time
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MISI KAMI DENGAN KINETIC MARQUEE "OUR MISSION" -->
+    <section id="misi" class="mission-wrapper border-top">
+        <div class="marquee-bg-text">
+            Our mission &nbsp;•&nbsp; Our mission &nbsp;•&nbsp; Our mission &nbsp;•&nbsp; Our mission &nbsp;•&nbsp; Our mission &nbsp;•&nbsp; Our mission
+        </div>
+
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8" data-aos="fade-up">
+                    <span class="section-kicker">Misi Kami</span>
+                    <h2 class="section-headline mb-3">
+                        Kami ingin merobohkan tembok penghalang untuk memberikan kesempatan yang sama
+                    </h2>
+                    <p class="section-paragraph mb-4">
+                        TokoPintar adalah platform teknologi e-commerce dengan misi mencapai pemerataan ekonomi digital. Visi kami adalah membangun ekosistem cerdas di mana siapa pun bisa memulai usaha dan menemukan produk terbaik dengan dukungan AI Recommendation dan Google Live Location.
+                    </p>
+                    <a href="/api/products/view" class="btn-tokped-primary">Jelajahi Ekosistem Kami</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATISTIK BESAR ALA TOKOPEDIA ABOUT -->
+    <section class="stats-clean-section">
+        <div class="container">
+            <div class="mb-4" data-aos="fade-up">
+                <span class="section-kicker">Skala & Teknologi</span>
+                <h3 class="fw-bold">Kami membangun teknologi untuk menghubungkan penjual dan pembeli</h3>
+            </div>
+
+            <div class="row g-4 pt-2">
+                <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="50">
+                    <div class="stat-big-num">99%</div>
+                    <div class="stat-big-desc">Kota terjangkau</div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-big-num">40+</div>
+                    <div class="stat-big-desc">Kategori pilihan</div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="150">
+                    <div class="stat-big-num">AI</div>
+                    <div class="stat-big-desc">Rekomendasi cerdas</div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-big-num">100%</div>
+                    <div class="stat-big-desc">Pinpoint GPS akurat</div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="250">
+                    <div class="stat-big-num">86.5%</div>
+                    <div class="stat-big-desc">UMKM pebisnis baru</div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-big-num">&gt;60%</div>
+                    <div class="stat-big-desc">Pesanan diproses cepat</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BISNIS KAMI (3 KARTU EKOSISTEM) -->
+    <section id="bisnis" class="py-5 my-4">
+        <div class="container">
+            <div class="mb-5" data-aos="fade-up">
+                <span class="section-kicker">Bisnis Kami</span>
+                <h2 class="section-headline" style="max-width: 680px;">
+                    Kami membangun ekosistem super dengan infrastruktur menyeluruh untuk mempermudah masyarakat
+                </h2>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="business-card">
+                        <div class="business-icon-circle"><i class="bi bi-shop"></i></div>
+                        <h4 class="fw-bold mb-3">E-Commerce & AI</h4>
+                        <p class="section-paragraph small mb-0">
+                            Layanan E-commerce TokoPintar menyediakan berbagai pilihan produk melalui Marketplace, Toko Resmi, serta mesin rekomendasi cerdas berbasis kemiripan produk untuk pengalaman belanja yang personal.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="business-card">
+                        <div class="business-icon-circle"><i class="bi bi-geo-alt-fill"></i></div>
+                        <h4 class="fw-bold mb-3">Logistics & Live GPS</h4>
+                        <p class="section-paragraph small mb-0">
+                            Pengiriman menjadi mudah dan tepat sasaran dengan integrasi Google Live Location Pinpoint, pemilihan kurir fleksibel, serta pelacakan nomor resi terpadu.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="business-card">
+                        <div class="business-icon-circle"><i class="bi bi-graph-up-arrow"></i></div>
+                        <h4 class="fw-bold mb-3">Teknologi & Analitik Penjual</h4>
+                        <p class="section-paragraph small mb-0">
+                            TokoPintar menyediakan dasbor analitik real-time untuk membantu penjual memantau stok, produk terlaris, dan meningkatkan kepercayaan pembeli lewat ulasan bukti foto & video.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DAMPAK KAMI -->
+    <section id="dampak" class="py-5 bg-light border-top border-bottom">
+        <div class="container">
+            <div class="mb-5" data-aos="fade-up">
+                <span class="section-kicker">Dampak Kami</span>
+                <h2 class="section-headline">Dampak dari komitmen kami terhadap perekonomian digital</h2>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="50">
+                    <div class="impact-box">
+                        <h5 class="fw-bold mb-2">Memberdayakan 90% penjual skala mikro</h5>
+                        <p class="text-muted small mb-0" style="line-height: 1.7;">
+                            TokoPintar mendorong para pelaku UMKM lokal untuk dapat bertransformasi digital dan memperluas jangkauan pelanggan tanpa batas wilayah.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="120">
+                    <div class="impact-box">
+                        <h5 class="fw-bold mb-2">Kepercayaan lewat bukti foto & video</h5>
+                        <p class="text-muted small mb-0" style="line-height: 1.7;">
+                            Fitur ulasan visual membantu calon pembeli melihat kondisi asli produk dari testimoni pengguna terverifikasi sebelum membeli.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="190">
+                    <div class="impact-box">
+                        <h5 class="fw-bold mb-2">Kemudahan mengelola bisnis online</h5>
+                        <p class="text-muted small mb-0" style="line-height: 1.7;">
+                            Peringatan stok otomatis, grafik penjualan, dan manajemen pesanan satu pintu memudahkan penjual fokus mengembangkan kualitas produk.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="260">
+                    <div class="impact-box">
+                        <h5 class="fw-bold mb-2">Mendorong inklusi pembayaran digital</h5>
+                        <p class="text-muted small mb-0" style="line-height: 1.7;">
+                            Mendukung beragam metode pembayaran mulai dari Virtual Account, E-Wallet/QRIS, hingga COD untuk kenyamanan seluruh lapisan masyarakat.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SUPERGRAPHIC GREEN BANNER BAWAH -->
+    <section class="container my-5 pt-3" data-aos="fade-up">
+        <div class="bottom-supergraphic">
+            <div class="row align-items-center position-relative" style="z-index: 2;">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold mb-2">Tertarik untuk menjadi bagian dari perjalanan kami?</h2>
+                    <p class="mb-4 mb-lg-0" style="opacity: 0.92;">
+                        Mari bersama-sama temukan kebutuhan terbaikmu dan ciptakan peluang baru di TokoPintar!
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                        <a href="/api/products/view" class="btn btn-light text-success fw-bold px-4 py-2 rounded-3">Jelajahi Produk</a>
+                        <a href="/api/auth/view/register" class="btn btn-outline-light fw-bold px-4 py-2 rounded-3">Mulai Berjualan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER CORPORATE ALA TOKOPEDIA ABOUT -->
+    <footer class="footer-corp">
+        <div class="container">
+            <div class="row g-4 mb-5">
+                <div class="col-6 col-md-3">
+                    <h6>Tentang Kami</h6>
+                    <ul>
+                        <li><a href="/api/products/about#tantangan">Kisah & Tantangan Kami</a></li>
+                        <li><a href="/api/products/about#misi">Misi TokoPintar</a></li>
+                        <li><a href="/api/products/about#dampak">Dampak Kami</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Bisnis & Layanan</h6>
+                    <ul>
+                        <li><a href="/api/products/view">Marketplace TokoPintar</a></li>
+                        <li><a href="/api/products/cart">Keranjang & Live GPS</a></li>
+                        <li><a href="/api/orders/view">Lacak Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Bergabung dengan Kami</h6>
+                    <ul>
+                        <li><a href="/api/auth/view/register">Mulai Berjualan</a></li>
+                        <li><a href="/api/admin/dashboard">Portal Pedagang</a></li>
+                        <li><a href="/api/profile/view">Pengaturan Akun</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Terhubung dengan Kami</h6>
+                    <div class="d-flex gap-3 fs-4 text-success mb-3">
+                        <a href="#" class="text-success"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-success"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-success"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-success"><i class="bi bi-youtube"></i></a>
+                    </div>
+                    <p class="small mb-0">Belanja lebih cerdas dan akurat bersama ekosistem digital <strong>TokoPintar</strong>.</p>
+                </div>
+            </div>
+            <div class="border-top pt-3 d-flex justify-content-between align-items-center flex-wrap gap-2 small">
+                <span>&copy; 2026 <strong>TokoPintar</strong>, seluruh hak dilindungi.</span>
+                <div>
+                    <span class="badge bg-success px-3 py-2">ID</span>
+                    <span class="badge bg-light text-dark border px-3 py-2">EN</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            offset: 60,
+            duration: 750,
+            easing: 'ease-out-cubic'
+        });
+    </script>
+</body>
+</html>

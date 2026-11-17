@@ -1,6 +1,8 @@
 from app import db
 from datetime import datetime
 import bcrypt
+from werkzeug.security import check_password_hash
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -15,15 +17,30 @@ class User(db.Model):
         self.password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
     def check_password(self, password):
-        return bcrypt.checkpw(password.encode(), self.password_hash.encode())
+        if not self.password_hash or not password:
+            return False
+        # Mendukung hash bawaan bcrypt ($2b$ / $2a$ / $2y$)
+        if self.password_hash.startswith(("$2a$", "$2b$", "$2y$")):
+            return bcrypt.checkpw(password.encode(), self.password_hash.encode())
+        # Mendukung hash Werkzeug (scrypt: / pbkdf2:) dari registrasi OTP
+        if "$" in self.password_hash:
+            return check_password_hash(self.password_hash, password)
+        # Fallback plain text lama
+        return self.password_hash == password
 
     def to_dict(self):
-        return {"id": self.id, "name": self.name, "email": self.email, "role": self.role}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "role": self.role,
+        }
+
 
 class Product(db.Model):
     __tablename__ = "products"
-    id = db.Column(db.BigInteger, primary_key=True) 
-    seller_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True) # TAMBAHAN MULTI-VENDOR
+    id = db.Column(db.BigInteger, primary_key=True)
+    seller_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)  # TAMBAHAN MULTI-VENDOR
     name = db.Column(db.String(255), nullable=False)
     category = db.Column(db.String(100))
     price = db.Column(db.Numeric(12, 2), default=0)
@@ -35,11 +52,17 @@ class Product(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id, "seller_id": self.seller_id, "name": self.name, 
-            "category": self.category, "price": float(self.price), 
-            "stock": self.stock, "description": self.description, 
-            "image_url": self.image_url, "rating": self.rating
+            "id": str(self.id),  # String agar 19-digit BigInteger tidak dibulatkan JavaScript
+            "seller_id": self.seller_id,
+            "name": self.name,
+            "category": self.category,
+            "price": float(self.price or 0),
+            "stock": self.stock,
+            "description": self.description,
+            "image_url": self.image_url,
+            "rating": self.rating,
         }
+
 
 class Interaction(db.Model):
     __tablename__ = "interactions"
@@ -51,10 +74,13 @@ class Interaction(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id, "user_id": self.user_id,
-            "product_id": self.product_id, "type": self.type,
-            "timestamp": self.timestamp.isoformat()
+            "id": self.id,
+            "user_id": self.user_id,
+            "product_id": str(self.product_id),
+            "type": self.type,
+            "timestamp": self.timestamp.isoformat(),
         }
+
 
 class Order(db.Model):
     __tablename__ = "orders"
@@ -68,10 +94,13 @@ class Order(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id, "user_id": self.user_id,
-            "total": float(self.total), "status": self.status,
-            "items": [i.to_dict() for i in self.items]
+            "id": self.id,
+            "user_id": self.user_id,
+            "total": float(self.total or 0),
+            "status": self.status,
+            "items": [i.to_dict() for i in self.items],
         }
+
 
 class OrderItem(db.Model):
     __tablename__ = "order_items"
@@ -83,9 +112,12 @@ class OrderItem(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id, "product_id": self.product_id,
-            "quantity": self.quantity, "price": float(self.price)
+            "id": self.id,
+            "product_id": str(self.product_id),
+            "quantity": self.quantity,
+            "price": float(self.price or 0),
         }
+
 
 class Review(db.Model):
     __tablename__ = "reviews"

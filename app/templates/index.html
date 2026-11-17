@@ -4,497 +4,730 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TokoPintar - Belanja Lebih Cerdas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        :root { 
-            --primary-color: #00B14F; 
-            --primary-hover: #009943; 
-            --bg-color: #F5F5F5; 
-            --text-dark: #212121; 
-            --text-muted: #6D7588; 
+        :root {
+            --tokped-green: #03AC0E;
+            --tokped-dark: #028A0B;
+            --tokped-mint: #E8F8EA;
+            --bg-page: #FFFFFF;
+            --surface-soft: #F8FAFC;
+            --text-main: #212121;
+            --text-muted: #6D7588;
+            --border-line: #E5E7E9;
         }
-        body { font-family: 'Open Sans', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
-        
-        /* Navbar */
-        .navbar-custom { background-color: var(--primary-color); padding: 10px 0; }
-        .navbar-brand { font-weight: 700; font-size: 1.5rem; color: white !important; display: flex; align-items: center; gap: 8px; }
-        .shopee-search-wrapper { flex-grow: 1; max-width: 700px; margin: 0 20px; }
-        .shopee-search-group { display: flex; background: white; border-radius: 4px; padding: 3px; }
-        .shopee-search-input { border: none; box-shadow: none !important; padding: 8px 15px; font-size: 0.9rem; border-radius: 4px 0 0 4px; }
-        .shopee-search-btn { background-color: var(--primary-color); color: white; border: none; border-radius: 0 4px 4px 0; padding: 0 20px; font-weight: 600; transition: 0.2s; }
-        .shopee-search-btn:hover { background-color: var(--primary-hover); }
-        .nav-icon-link { color: white; font-size: 1.3rem; position: relative; text-decoration: none; display: flex; align-items: center; }
-        .nav-icon-link:hover { color: #f0f0f0; }
-        .cart-badge { position: absolute; top: -5px; right: -10px; font-size: 0.6rem; }
 
-        /* Category Grid */
-        .category-grid { display: flex; justify-content: space-around; background: white; padding: 20px 0; border-radius: 4px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 15px; }
-        .cat-item { text-align: center; cursor: pointer; text-decoration: none; color: var(--text-dark); width: 15%; }
-        .cat-icon-box { width: 45px; height: 45px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; color: var(--primary-color); font-size: 1.2rem; border: 1px solid #d1fae5; transition: 0.2s; }
-        .cat-item:hover .cat-icon-box { background: var(--primary-color); color: white; }
-        .cat-name { font-size: 0.75rem; color: var(--text-muted); display: block; }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
 
-        /* Section Titles */
-        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .section-title::after { content: ''; flex-grow: 1; height: 2px; background: #e2e8f0; display: block; }
-        .badge-ai { background: linear-gradient(45deg, #00B14F, #009943); color: white; font-size: 0.7rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; text-transform: none; letter-spacing: 0.5px; }
+        /* TOP UTILITY BAR */
+        .top-utility-bar {
+            background-color: #F3F4F5;
+            font-size: 0.77rem;
+            color: var(--text-muted);
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-line);
+        }
+        .top-utility-bar a { color: var(--text-muted); text-decoration: none; transition: 0.15s; }
+        .top-utility-bar a:hover { color: var(--tokped-green); }
 
-        /* Carousel AI */
-        .ai-scroll-container { display: flex; gap: 15px; overflow-x: auto; scroll-behavior: smooth; padding-bottom: 10px; -ms-overflow-style: none; scrollbar-width: none; }
-        .ai-scroll-container::-webkit-scrollbar { display: none; }
-        .ai-scroll-item { flex: 0 0 auto; width: 180px; }
+        /* MAIN GLASS WHITE NAVBAR ALA TOKOPEDIA MODERN */
+        .navbar-main {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-line);
+            padding: 13px 0;
+            z-index: 1030;
+        }
+        .brand-logo {
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--tokped-green) !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.6px;
+        }
 
-        /* Product Card */
-        .product-card { border: 1px solid #e2e8f0; border-radius: 4px; background: #ffffff; transition: all 0.2s ease; overflow: hidden; height: 100%; cursor: pointer; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .product-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-color: var(--primary-color); transform: translateY(-2px); }
-        .product-img { aspect-ratio: 1/1; object-fit: cover; width: 100%; border-bottom: 1px solid #f0f0f0; }
-        .product-title { font-weight: 400; font-size: 0.85rem; color: var(--text-dark); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; margin-bottom: 8px; height: 2.8em; }
-        .product-price { font-weight: 700; font-size: 1.1rem; color: var(--primary-color); }
-        .product-meta { font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-top: 5px; }
-        .product-location { font-size: 0.75rem; color: var(--text-muted); text-align: right; }
-        
-        .btn-wishlist { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.9); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #ccc; border: none; transition: 0.2s; z-index: 10; }
-        .btn-wishlist:hover { color: #dc3545; transform: scale(1.1); }
-        .btn-wishlist.active { color: #dc3545; }
+        /* SEARCH BAR */
+        .search-box-modern {
+            flex: 1 1 auto;
+            max-width: 580px;
+            width: 100%;
+        }
+        .search-box-modern .input-group {
+            border: 1.5px solid #D1D5DB;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            background: #FFFFFF;
+        }
+        .search-box-modern .input-group:focus-within {
+            border-color: var(--tokped-green);
+            box-shadow: 0 0 0 3px rgba(3, 172, 14, 0.12);
+        }
+        .search-box-modern .form-control {
+            border: none;
+            box-shadow: none;
+            font-size: 0.9rem;
+            padding: 9px 12px;
+        }
+        .search-box-modern .btn-search-submit {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0 14px;
+        }
+        .search-box-modern .btn-search-submit:hover { color: var(--tokped-green); }
 
-        /* Overlay Pencarian */
-        .search-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.6); z-index: 1050; visibility: hidden; opacity: 0; transition: opacity 0.3s ease; }
-        .search-overlay.active { visibility: visible; opacity: 1; }
-        .search-panel { background-color: white; width: 100%; padding: 15px 0; transform: translateY(-100%); transition: transform 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
-        .search-overlay.active .search-panel { transform: translateY(0); }
-        .suggestion-box { position: absolute; top: 100%; left: 0; width: calc(100% - 80px); background: white; border-radius: 0 0 4px 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 1060; display: none; border: 1px solid #e2e8f0; max-height: 300px; overflow-y: auto; }
-        .suggestion-item { padding: 10px 15px; cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
-        .suggestion-item:hover, .suggestion-item.active { background-color: #f0fdf4; color: var(--primary-color); }
+        /* AUTH & ICON BUTTONS */
+        .nav-icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: 0.15s;
+            position: relative;
+        }
+        .nav-icon-btn:hover { background-color: #F3F4F5; color: var(--tokped-green); }
 
-        /* Skeleton & Paginasi */
-        .skeleton { background: #e2e8f0; border-radius: 4px; animation: pulse 1.5s infinite ease-in-out; }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
-        .skeleton-img { aspect-ratio: 1/1; width: 100%; margin-bottom: 10px; }
-        .skeleton-text { height: 12px; margin-bottom: 8px; width: 80%; }
-        .pagination .page-link { color: var(--text-dark); border: 1px solid #e2e8f0; margin: 0 3px; border-radius: 4px; font-size: 0.9rem; font-weight: 600; padding: 8px 14px; }
-        .pagination .page-item.active .page-link { background-color: var(--primary-color); border-color: var(--primary-color); color: white; }
-        .pagination .page-item.disabled .page-link { color: #adb5bd; background-color: #f8f9fa; }
+        .btn-outline-tokped {
+            border: 1.5px solid var(--tokped-green);
+            color: var(--tokped-green);
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 6px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.15s;
+        }
+        .btn-outline-tokped:hover { background-color: var(--tokped-mint); color: var(--tokped-green); }
 
-        .footer { background-color: #ffffff; border-top: 4px solid var(--primary-color); padding: 30px 0; margin-top: 50px; font-size: 0.85rem; color: var(--text-muted); }
+        .btn-solid-tokped {
+            background-color: var(--tokped-green);
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 7px 16px;
+            border-radius: 8px;
+            border: none;
+            text-decoration: none;
+            transition: 0.15s;
+        }
+        .btn-solid-tokped:hover { background-color: var(--tokped-dark); color: #FFFFFF; }
+
+        /* HERO PROMO BANNER SUPERGRAPHIC */
+        .hero-marketplace-banner {
+            position: relative;
+            background: linear-gradient(115deg, #007A0A 0%, #03AC0E 60%, #19C926 100%);
+            border-radius: 18px;
+            padding: 36px 40px;
+            color: #FFFFFF;
+            overflow: hidden;
+            box-shadow: 0 14px 30px -12px rgba(3, 172, 14, 0.35);
+        }
+        .hero-marketplace-banner::before {
+            content: '';
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            border: 44px solid rgba(255, 255, 255, 0.1);
+            top: -120px;
+            right: -60px;
+            pointer-events: none;
+        }
+        .hero-marketplace-banner::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            bottom: -90px;
+            right: 24%;
+            pointer-events: none;
+        }
+
+        /* CATEGORY TABS (UNDERLINE STYLE ALA TOKOPEDIA) */
+        .category-strip {
+            border-bottom: 1px solid var(--border-line);
+            background: #FFFFFF;
+        }
+        .cat-tab-btn {
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 12px 16px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .cat-tab-btn:hover { color: var(--tokped-green); }
+        .cat-tab-btn.active {
+            color: var(--tokped-green);
+            border-bottom-color: var(--tokped-green);
+        }
+
+        /* PRODUCT CARD CLEAN & ELEVATED */
+        .product-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-line);
+            border-radius: 12px;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+            border-color: #CBD5E1;
+        }
+        .product-img-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #F8FAFC;
+            overflow: hidden;
+        }
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+        .product-card:hover .product-img { transform: scale(1.04); }
+
+        .btn-wish-float {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748B;
+            cursor: pointer;
+            z-index: 2;
+            transition: 0.15s;
+        }
+        .btn-wish-float:hover { transform: scale(1.08); }
+        .btn-wish-float.active { color: #EF4444; }
+
+        .product-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+            min-height: 2.45rem;
+        }
+        .product-price {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.3px;
+        }
+        .badge-cashback {
+            display: inline-block;
+            background: var(--tokped-mint);
+            color: var(--tokped-green);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+
+        /* PAGINATION */
+        .pagination .page-link {
+            color: var(--text-main);
+            border: 1px solid var(--border-line);
+            margin: 0 3px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 7px 13px;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: var(--tokped-green);
+            border-color: var(--tokped-green);
+            color: #FFFFFF;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #ADB5BD;
+            background-color: #F8F9FA;
+        }
+
+        /* FOOTER MULTI-KOLOM */
+        .footer-tokped {
+            background-color: #FFFFFF;
+            border-top: 1px solid var(--border-line);
+            padding: 55px 0 30px;
+            margin-top: 70px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .footer-tokped h6 {
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 14px;
+            font-size: 0.92rem;
+        }
+        .footer-tokped ul { list-style: none; padding: 0; margin: 0; }
+        .footer-tokped ul li { margin-bottom: 9px; }
+        .footer-tokped ul li a { color: var(--text-muted); text-decoration: none; }
+        .footer-tokped ul li a:hover { color: var(--tokped-green); }
     </style>
 </head>
 <body>
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-custom sticky-top mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="/api/products/view"><i class="bi bi-bag-heart-fill"></i> TokoPintar</a>
-            
-            <div class="shopee-search-wrapper d-none d-md-block">
-                <div class="shopee-search-group" onclick="openSearch()" style="cursor: text;">
-                    <input type="text" class="form-control shopee-search-input" placeholder="Cari produk impianmu..." readonly style="cursor: text;">
-                    <button class="shopee-search-btn" type="button"><i class="bi bi-search"></i></button>
-                </div>
+    <!-- TOP UTILITY BAR -->
+    <div class="top-utility-bar d-none d-md-block">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-stars text-success"></i> Gratis Ongkir + Rekomendasi AI Personal di <strong>TokoPintar</strong>
             </div>
+            <div class="d-flex gap-4">
+                <a href="/api/products/about" class="fw-semibold">Tentang TokoPintar</a>
+                <a href="/api/admin/dashboard">Mulai Berjualan</a>
+                <a href="/api/orders/view">Lacak Pesanan</a>
+            </div>
+        </div>
+    </div>
 
-            <div class="d-flex align-items-center gap-4">
-                <a href="/api/products/wishlist" class="nav-icon-link" title="Wishlist"><i class="bi bi-heart"></i></a>
-                <a href="/api/products/cart" class="nav-icon-link">
-                    <i class="bi bi-cart3"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge" id="cart-badge" style="display: none;">0</span>
-                </a>
-                
-                <div id="auth-buttons" class="d-none d-md-flex gap-2 align-items-center">
-                    <a href="/api/auth/view/login" class="btn btn-sm btn-light fw-bold text-success">Masuk</a>
-                    <a href="/api/auth/view/register" class="btn btn-sm btn-outline-light fw-bold">Daftar</a>
+    <!-- MAIN NAVBAR -->
+    <nav class="navbar navbar-main sticky-top">
+        <div class="container d-flex align-items-center justify-content-between flex-nowrap gap-3">
+            <a class="brand-logo flex-shrink-0" href="/api/products/view">
+                <i class="bi bi-bag-heart-fill"></i> TokoPintar
+            </a>
+
+            <!-- SEARCH BAR -->
+            <form class="search-box-modern d-flex" onsubmit="handleSearchSubmit(event)">
+                <div class="input-group">
+                    <button class="btn-search-submit" type="submit"><i class="bi bi-search"></i></button>
+                    <input type="text" id="search-input" class="form-control" placeholder="Cari di TokoPintar..." oninput="handleSearchInput()">
                 </div>
+            </form>
+
+            <!-- ACTION ICONS & PROFILE -->
+            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                <a href="/api/products/wishlist" class="nav-icon-btn fs-5" title="Wishlist">
+                    <i class="bi bi-heart"></i>
+                </a>
+                <a href="/api/products/cart" class="nav-icon-btn fs-5" title="Keranjang">
+                    <i class="bi bi-cart3"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-badge" style="display: none; font-size: 0.6rem;">0</span>
+                </a>
+
+                <div class="vr mx-1 d-none d-sm-block"></div>
+
+                <div id="auth-buttons" class="d-flex gap-2 align-items-center">
+                    <a href="/api/auth/view/login" class="btn-outline-tokped">Masuk</a>
+                    <a href="/api/auth/view/register" class="btn-solid-tokped">Daftar</a>
+                </div>
+
                 <div id="user-profile" class="d-none align-items-center gap-2">
-                    <a href="/api/admin/dashboard" id="btn-dashboard-nav" class="btn btn-sm btn-warning fw-bold d-none"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    <span class="fw-bold text-white ms-2" id="nav-username" style="font-size: 0.9rem;"></span>
-                    <button class="btn btn-sm btn-outline-light" onclick="logout()">Logout</button>
+                    <a href="/api/orders/view" class="btn btn-sm btn-light border fw-bold d-none d-lg-inline-flex align-items-center gap-1 rounded-3">
+                        <i class="bi bi-bag-check text-success"></i> Pesanan
+                    </a>
+                    <a href="/api/admin/dashboard" id="btn-dashboard" class="btn btn-sm btn-warning fw-bold d-none rounded-3">Dashboard</a>
+                    <a href="/api/profile/view" class="text-dark fw-bold text-decoration-none d-flex align-items-center gap-1 px-2 py-1 rounded-3" title="Akun Saya">
+                        <i class="bi bi-person-circle text-success fs-5"></i>
+                        <span id="nav-username" style="font-size: 0.88rem;"></span>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-danger rounded-3 fw-semibold" onclick="logout()">Logout</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- OVERLAY PENCARIAN -->
-    <div class="search-overlay" id="searchOverlay">
-        <div class="search-panel">
-            <div class="container">
-                <div class="d-flex align-items-center gap-3 position-relative">
-                    <input type="text" id="real-search-input" class="form-control form-control-lg border-success" placeholder="Mau cari apa hari ini?" 
-                           oninput="handleLiveSearch()" onkeydown="handleKeyDown(event)" autocomplete="off">
-                    <div class="suggestion-box" id="suggestionBox"></div>
-                    <button class="btn btn-link text-dark fw-bold text-decoration-none" onclick="closeSearch()">Batal</button>
-                </div>
+    <!-- ALAMAT PENGIRIMAN BAR -->
+    <div class="border-bottom bg-light py-2">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2 small">
+            <div class="text-muted">
+                <i class="bi bi-geo-alt-fill text-success"></i> Dikirim ke
+                <a href="/api/profile/view" class="text-dark fw-bold text-decoration-none" id="home-ship-dest">Atur Alamat Pengiriman GPS <i class="bi bi-chevron-down small"></i></a>
+            </div>
+            <div class="d-none d-md-flex gap-3 text-muted">
+                <span><i class="bi bi-shield-check text-success"></i> Transaksi Aman</span>
+                <span><i class="bi bi-camera-video text-success"></i> Ulasan Bukti Real</span>
             </div>
         </div>
     </div>
 
-    <div class="container mb-5">
-        
-        <!-- KATEGORI GRID -->
-        <div class="category-grid d-none d-md-flex" id="categoryGrid">
-            <!-- Diisi oleh JavaScript -->
-            <a href="#" class="cat-item" onclick="showCategoryModal()">
-                <div class="cat-icon-box"><i class="bi bi-grid"></i></div>
-                <span class="cat-name">Lihat Semua</span>
-            </a>
-        </div>
-
-        <!-- HERO BANNER -->
-        <div class="hero-banner shadow-sm mb-4" style="background: linear-gradient(135deg, var(--primary-color) 0%, #007A35 100%); border-radius: 8px; padding: 40px; color: white;">
-            <h2 class="fw-bold mb-2" id="hero-title">Promo Spesial Hari Ini!</h2>
-            <p class="mb-0 fs-5" id="hero-subtitle">Dapatkan diskon hingga 50% untuk produk pilihan. Belanja lebih cerdas dengan rekomendasi AI.</p>
-        </div>
-
-        <!-- AI REKOMENDASI (CAROUSEL) -->
-        <div id="ai-section" class="d-none mb-5">
-            <div class="section-title">
-                <i class="bi bi-stars text-warning"></i> Rekomendasi Pintar <span class="badge-ai ms-2">AI Powered</span>
-            </div>
-            <div class="ai-scroll-container" id="ai-recommendation-list"></div>
-        </div>
-
-        <!-- TERAKHIR DILIHAT -->
-        <div id="recent-section" class="d-none mb-5">
-            <div class="section-title"><i class="bi bi-clock-history text-primary"></i> Terakhir Dilihat</div>
-            <div class="row g-3" id="recent-list"></div>
-        </div>
-
-        <!-- KATALOG PRODUK -->
-        <div class="d-flex justify-content-between align-items-center mb-3" id="catalog-header">
-            <div class="section-title mb-0" id="catalog-title">Jelajahi Produk</div>
-            
-            <!-- Tombol Reset Filter (Muncul saat kategori dipilih) -->
-            <button class="btn btn-sm btn-outline-danger fw-bold d-none" id="btn-reset-category" onclick="resetCategory()">
-                <i class="bi bi-x-circle"></i> Hapus Filter
-            </button>
-
-            <div class="d-flex gap-2">
-                <select class="form-select form-select-sm w-auto border-success" id="category-filter" onchange="applyFilter()"><option value="">Semua Kategori</option></select>
-                <select class="form-select form-select-sm w-auto border-success" id="sort-filter" onchange="applyFilter()">
-                    <option value="">Urutkan: Default</option>
-                    <option value="price_asc">Harga Terendah</option>
-                    <option value="price_desc">Harga Tertinggi</option>
-                    <option value="rating_desc">Rating Tertinggi</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row g-3" id="product-list"></div>
-        <nav class="mt-5 d-flex justify-content-center" id="pagination-container" style="display: none;"><ul class="pagination" id="pagination-list"></ul></nav>
-    </div>
-
-    <!-- MODAL SEMUA KATEGORI -->
-    <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold">Semua Kategori</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-3" id="modal-category-list">
-                        <!-- Diisi oleh JavaScript -->
+    <div class="container pt-4">
+        <!-- HERO PROMO BANNER -->
+        <div class="hero-marketplace-banner mb-4" id="hero-promo-section">
+            <div class="row align-items-center position-relative" style="z-index: 1;">
+                <div class="col-lg-8">
+                    <span class="badge bg-white text-success fw-bold mb-2 px-3 py-1 rounded-pill">Rekomendasi AI & Live GPS</span>
+                    <h2 class="fw-bold mb-2" style="letter-spacing: -0.5px;">Belanja Lebih Cerdas, Sampai Lebih Tepat</h2>
+                    <p class="mb-3 small" style="opacity: 0.92; max-width: 540px; line-height: 1.65;">
+                        Temukan produk pilihan terbaik dengan rekomendasi pintar dan pengiriman akurat berbasis Google Live Location.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="#catalog-anchor" class="btn btn-light text-success fw-bold btn-sm px-3 py-2 rounded-3">Mulai Belanja</a>
+                        <a href="/api/products/about" class="btn btn-outline-light fw-bold btn-sm px-3 py-2 rounded-3">Tentang TokoPintar</a>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- KATEGORI TABS -->
+        <div id="catalog-anchor" class="category-strip mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="d-flex overflow-auto" id="category-pills">
+                <button type="button" class="cat-tab-btn active" onclick="filterByCategory('', this)">Untuk Kamu</button>
+                <button type="button" class="cat-tab-btn" onclick="filterByCategory('fashion', this)">Fashion</button>
+                <button type="button" class="cat-tab-btn" onclick="filterByCategory('elektronik', this)">Elektronik</button>
+                <button type="button" class="cat-tab-btn" onclick="filterByCategory('buku', this)">Buku & Edukasi</button>
+                <button type="button" class="cat-tab-btn" onclick="filterByCategory('rumah', this)">Rumah Tangga</button>
+                <button type="button" class="cat-tab-btn" onclick="filterByCategory('kesehatan', this)">Kesehatan & Kecantikan</button>
+            </div>
+            <span class="small text-muted d-none d-lg-inline" id="catalog-count-info">Memuat produk...</span>
+        </div>
+
+        <!-- HEADING KATALOG -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0" id="catalog-heading">Rekomendasi Untukmu</h5>
+        </div>
+
+        <!-- LOADER -->
+        <div id="loading-grid" class="text-center py-5">
+            <div class="spinner-border text-success" role="status"></div>
+            <p class="mt-2 text-muted small">Memuat katalog TokoPintar...</p>
+        </div>
+
+        <!-- GRID PRODUK -->
+        <div class="row g-3" id="product-grid"></div>
+
+        <!-- PAGINATION -->
+        <nav class="mt-5 d-flex justify-content-center">
+            <ul class="pagination" id="pagination-container"></ul>
+        </nav>
     </div>
 
-    <footer class="footer">
-        <div class="container text-center">
-            <h5 class="fw-bold text-success mb-2"><i class="bi bi-bag-heart-fill"></i> TokoPintar</h5>
-            <p class="mb-0">&copy; 2026 TokoPintar. Hak Cipta Dilindungi.</p>
+    <!-- TOAST NOTIFIKASI -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="homeToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="home-toast-msg">Berhasil!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER MULTI-KOLOM -->
+    <footer class="footer-tokped">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-6 col-md-3">
+                    <h6>TokoPintar</h6>
+                    <ul>
+                        <li><a href="/api/products/about">Tentang TokoPintar</a></li>
+                        <li><a href="/api/products/view">Katalog Produk</a></li>
+                        <li><a href="/api/admin/dashboard">Portal Pedagang</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Beli & Jual</h6>
+                    <ul>
+                        <li><a href="/api/products/cart">Keranjang Belanja</a></li>
+                        <li><a href="/api/products/wishlist">Wishlist Saya</a></li>
+                        <li><a href="/api/orders/view">Lacak Status Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Bantuan & Keamanan</h6>
+                    <ul>
+                        <li><a href="/api/profile/view">Pengaturan Akun & Alamat</a></li>
+                        <li><a href="/api/products/about#bisnis">Keunggulan AI & GPS</a></li>
+                        <li><a href="/api/products/about#dampak">Dampak Ekosistem</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-bag-heart-fill"></i> TokoPintar</h5>
+                    <p class="small mb-2">Platform e-commerce cerdas dengan rekomendasi AI dan pelacakan lokasi pengiriman akurat.</p>
+                    <div class="d-flex gap-3 fs-5 text-success">
+                        <i class="bi bi-instagram"></i>
+                        <i class="bi bi-facebook"></i>
+                        <i class="bi bi-youtube"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top pt-3 d-flex justify-content-between align-items-center flex-wrap gap-2 small">
+                <span>&copy; 2026 <strong>TokoPintar</strong>. Hak Cipta Dilindungi.</span>
+                <span class="badge bg-success-subtle text-success px-3 py-1">Indonesia</span>
+            </div>
         </div>
     </footer>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex"><div class="toast-body" id="toast-message">Berhasil!</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // --- LOGIKA MODAL KATEGORI ---
-        const categoryModal = new bootstrap.Modal(document.getElementById('categoryModal'));
-        let allCategories = []; // Menyimpan daftar kategori
+        let currentPage = 1;
+        let currentSearch = '';
+        let currentCategory = '';
+        let searchTimeout = null;
 
-        function showCategoryModal() {
-            const modalList = document.getElementById('modal-category-list');
-            modalList.innerHTML = '';
-            
-            if(allCategories.length === 0) {
-                modalList.innerHTML = '<div class="col-12 text-center text-muted">Belum ada kategori.</div>';
-            } else {
-                allCategories.forEach(cat => {
-                    modalList.innerHTML += `
-                        <div class="col-4 col-md-3">
-                            <a href="#" onclick="applyCategory('${cat}'); categoryModal.hide(); return false;" class="text-decoration-none">
-                                <div class="p-3 border rounded text-center h-100 hover-bg-light">
-                                    <i class="bi bi-tag text-success fs-3 mb-2 d-block"></i>
-                                    <span class="text-dark fw-bold" style="font-size: 0.9rem;">${cat}</span>
-                                </div>
-                            </a>
-                        </div>
-                    `;
-                });
-            }
-            categoryModal.show();
+        const urlParams = new URLSearchParams(window.location.search);
+        const sellerFilter = urlParams.get('seller_id') || '';
+        if (urlParams.get('search')) {
+            currentSearch = urlParams.get('search');
+            document.getElementById('search-input').value = currentSearch;
         }
 
-        // --- FILTER KATEGORI & SCROLL ---
-        function applyCategory(cat) {
-            document.getElementById('category-filter').value = cat;
-            currentCategory = cat;
-            currentPage = 1;
-            
-            // Sembunyikan AI & Recently Viewed
-            document.getElementById('ai-section').classList.add('d-none');
-            document.getElementById('recent-section').classList.add('d-none');
-            
-            // Tampilkan Tombol Reset
-            document.getElementById('btn-reset-category').classList.remove('d-none');
+        const formatRupiah = (val) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val || 0);
 
-            // Fetch Produk
-            fetchProducts();
-
-            // Scroll ke bagian katalog
-            setTimeout(() => {
-                document.getElementById('catalog-header').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
+        function showToast(msg, ok = true) {
+            const el = document.getElementById('homeToast');
+            document.getElementById('home-toast-msg').innerText = msg;
+            el.classList.toggle('bg-success', ok);
+            el.classList.toggle('bg-danger', !ok);
+            new bootstrap.Toast(el).show();
         }
 
-        function resetCategory() {
-            document.getElementById('category-filter').value = "";
-            currentCategory = "";
-            currentPage = 1;
-            
-            // Sembunyikan Tombol Reset
-            document.getElementById('btn-reset-category').classList.add('d-none');
-
-            // Munculkan AI & Recently Viewed
-            document.getElementById('ai-section').classList.remove('d-none');
-            renderRecentlyViewed(); // Pastikan data terbaru dimuat
-
-            // Fetch Produk
-            fetchProducts();
-
-            // Scroll ke atas
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // --- LOGIKA OVERLAY PENCARIAN ---
-        function openSearch() { document.getElementById('searchOverlay').classList.add('active'); setTimeout(() => { document.getElementById('real-search-input').focus(); }, 100); }
-        function closeSearch() { document.getElementById('searchOverlay').classList.remove('active'); document.getElementById('suggestionBox').style.display = 'none'; }
-        document.getElementById('searchOverlay').addEventListener('click', function(e) { if (e.target === this) closeSearch(); });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSearch(); });
-
-        // --- PENCARIAN LIVE & AUTOCOMPLETE ---
-        let searchTimeout, selectedSuggestionIndex = -1;
-        function handleLiveSearch() {
-            const query = document.getElementById('real-search-input').value.trim();
-            const suggestionBox = document.getElementById('suggestionBox');
-            clearTimeout(searchTimeout);
-            if (query.length === 0) { suggestionBox.style.display = 'none'; currentSearch = ""; currentPage = 1; fetchProducts(); return; }
-            searchTimeout = setTimeout(() => {
-                if (query.length >= 2) {
-                    fetch(`/api/products/suggestions?q=${encodeURIComponent(query)}`).then(res => res.json()).then(data => {
-                        if (data.data && data.data.length > 0) {
-                            suggestionBox.style.display = 'block'; suggestionBox.innerHTML = ''; selectedSuggestionIndex = -1;
-                            data.data.forEach((suggestion) => {
-                                const highlighted = suggestion.replace(new RegExp(`(${query})`, 'gi'), '<strong>$1</strong>');
-                                suggestionBox.innerHTML += `<div class="suggestion-item" onclick="applySuggestion('${suggestion.replace(/'/g, "\\'")}')"><i class="bi bi-search text-muted"></i> ${highlighted}</div>`;
-                            });
-                        } else { suggestionBox.style.display = 'none'; }
-                    });
-                } else { suggestionBox.style.display = 'none'; }
-            }, 300);
-        }
-        function applySuggestion(text) { document.getElementById('real-search-input').value = text; document.getElementById('suggestionBox').style.display = 'none'; doSearch(); }
-        function doSearch() { currentSearch = document.getElementById('real-search-input').value.trim(); currentPage = 1; fetchProducts(); closeSearch(); }
-        function handleKeyDown(event) {
-            const suggestionBox = document.getElementById('suggestionBox'); const items = suggestionBox.querySelectorAll('.suggestion-item');
-            if (suggestionBox.style.display === 'block' && items.length > 0) {
-                if (event.key === 'ArrowDown') { event.preventDefault(); selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length; updateHighlight(items); }
-                else if (event.key === 'ArrowUp') { event.preventDefault(); selectedSuggestionIndex = (selectedSuggestionIndex - 1 + items.length) % items.length; updateHighlight(items); }
-                else if (event.key === 'Enter') { event.preventDefault(); if (selectedSuggestionIndex >= 0) items[selectedSuggestionIndex].click(); else doSearch(); }
-            } else if (event.key === 'Enter') { doSearch(); }
-        }
-        function updateHighlight(items) { items.forEach((item, index) => { if (index === selectedSuggestionIndex) { item.classList.add('active'); item.scrollIntoView({ block: 'nearest' }); } else item.classList.remove('active'); }); }
-
-        // --- SMART NAVBAR ---
-        const urlParams = new URLSearchParams(window.location.search); const sellerId = urlParams.get('seller_id');
         document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('token'); const role = localStorage.getItem('user_role');
-            const name = localStorage.getItem('user_name'); const myId = localStorage.getItem('user_id');
+            // Tangkap token & data user hasil redirect OAuth (Google / Facebook)
+            const oauthToken = urlParams.get('token');
+            if (oauthToken) {
+                localStorage.setItem('token', oauthToken);
+                if (urlParams.get('user_id')) localStorage.setItem('user_id', urlParams.get('user_id'));
+                if (urlParams.get('user_name')) localStorage.setItem('user_name', urlParams.get('user_name'));
+                if (urlParams.get('user_role')) localStorage.setItem('user_role', urlParams.get('user_role'));
+
+                // Hapus parameter sensitif dari URL bar agar bersih & aman
+                const cleanParams = new URLSearchParams(window.location.search);
+                cleanParams.delete('token');
+                cleanParams.delete('user_id');
+                cleanParams.delete('user_name');
+                cleanParams.delete('user_role');
+                const cleanQuery = cleanParams.toString();
+                window.history.replaceState({}, document.title, window.location.pathname + (cleanQuery ? `?${cleanQuery}` : ''));
+
+                showToast(`Selamat datang, ${urlParams.get('user_name') || 'Pengguna'}!`);
+            }
+
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('user_role');
+            const name = localStorage.getItem('user_name');
+            const savedAddr = localStorage.getItem('user_address');
+
+            if (savedAddr) {
+                document.getElementById('home-ship-dest').innerHTML = `${savedAddr.split(',').slice(0, 2).join(',')} <i class="bi bi-chevron-down small"></i>`;
+            }
+
             if (token && name) {
-                document.getElementById('auth-buttons').classList.add('d-none'); document.getElementById('user-profile').classList.remove('d-none');
-                document.getElementById('user-profile').classList.add('d-flex'); document.getElementById('nav-username').innerText = name;
-                if (role === 'admin' || role === 'pedagang') { document.getElementById('btn-dashboard-nav').classList.remove('d-none'); }
+                document.getElementById('auth-buttons').classList.replace('d-flex', 'd-none');
+                const userProfile = document.getElementById('user-profile');
+                userProfile.classList.remove('d-none');
+                userProfile.classList.add('d-flex');
+                document.getElementById('nav-username').innerText = name;
+                if (role === 'admin' || role === 'pedagang') {
+                    document.getElementById('btn-dashboard').classList.remove('d-none');
+                }
             }
-            if (sellerId) {
-                document.getElementById('catalog-title').innerText = "Etalase Toko"; document.getElementById('hero-title').innerText = "Memuat Toko...";
-                document.getElementById('ai-section').classList.add('d-none');
-                fetch(`/api/products/seller/${sellerId}`).then(res => res.json()).then(data => {
-                    if(data.data) {
-                        document.getElementById('hero-title').innerText = data.data.name;
-                        document.getElementById('hero-subtitle').innerText = "Selamat datang! Temukan produk terbaik hanya di toko kami.";
-                        document.title = data.data.name + " - TokoPintar";
-                    }
-                });
-            }
-            updateCartBadge(); 
-            renderRecentlyViewed();
-            loadCategoryGrid(); // Load kategori ke grid & modal
+
+            updateCartBadge();
+            loadProducts(1);
         });
-        function logout() { localStorage.clear(); window.location.reload(); }
-        function showToast(message, isSuccess = true) { const toastEl = document.getElementById('liveToast'); document.getElementById('toast-message').innerText = message; if(isSuccess) toastEl.classList.replace('bg-danger', 'bg-success'); else toastEl.classList.replace('bg-success', 'bg-danger'); new bootstrap.Toast(toastEl).show(); }
-        function updateCartBadge() { let cart = JSON.parse(localStorage.getItem('cart')) || []; let badge = document.getElementById('cart-badge'); let totalItems = cart.reduce((sum, item) => sum + item.qty, 0); if (totalItems > 0) { badge.style.display = 'inline-block'; badge.innerText = totalItems; } else badge.style.display = 'none'; }
-        function getWishlist() { return JSON.parse(localStorage.getItem('wishlist')) || []; }
-        function toggleWishlist(event, id, name, price, image) {
-            event.preventDefault(); let wishlist = getWishlist(); let index = wishlist.findIndex(item => item.id == id); let btn = event.currentTarget;
-            if (index > -1) { wishlist.splice(index, 1); btn.classList.remove('active'); btn.innerHTML = '<i class="bi bi-heart"></i>'; showToast('Dihapus dari Wishlist', false); } 
-            else { wishlist.push({ id, name, price, image }); btn.classList.add('active'); btn.innerHTML = '<i class="bi bi-heart-fill"></i>'; showToast('Ditambahkan ke Wishlist'); }
+
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+
+        function updateCartBadge() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let badge = document.getElementById('cart-badge');
+            let totalItems = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
+            badge.style.display = totalItems > 0 ? 'inline-block' : 'none';
+            badge.innerText = totalItems;
+        }
+
+        function getWishlist() {
+            return JSON.parse(localStorage.getItem('wishlist')) || [];
+        }
+
+        function toggleCardWishlist(event, id, name, price, image) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (!localStorage.getItem('token')) {
+                showToast('Silakan masuk terlebih dahulu untuk menyimpan ke Wishlist.', false);
+                setTimeout(() => { window.location.href = '/api/auth/view/login'; }, 1000);
+                return;
+            }
+
+            let wishlist = getWishlist();
+            const idx = wishlist.findIndex(item => String(item.id) === String(id));
+            const btn = event.currentTarget;
+
+            if (idx > -1) {
+                wishlist.splice(idx, 1);
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="bi bi-heart"></i>';
+                showToast('Dihapus dari Wishlist', false);
+            } else {
+                wishlist.push({ id: String(id), name, price, image });
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="bi bi-heart-fill"></i>';
+                showToast('Ditambahkan ke Wishlist!');
+            }
             localStorage.setItem('wishlist', JSON.stringify(wishlist));
         }
-        function checkWishlistUI() { let wishlist = getWishlist(); document.querySelectorAll('.btn-wishlist').forEach(btn => { if (wishlist.some(item => item.id == btn.getAttribute('data-id'))) { btn.classList.add('active'); btn.innerHTML = '<i class="bi bi-heart-fill"></i>'; } }); }
-        function renderRecentlyViewed() {
-            let recent = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
-            if (recent.length > 0) {
-                document.getElementById('recent-section').classList.remove('d-none'); const list = document.getElementById('recent-list');
-                recent.slice(0, 4).forEach(product => {
-                    const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(product.price || 0);
-                    list.innerHTML += `<div class="col-6 col-md-3"><a href="/api/products/view/${product.id}" class="text-decoration-none"><div class="card product-card"><img src="${product.image}" class="product-img"><div class="card-body p-2"><h6 class="product-title">${product.name}</h6><div class="product-price" style="font-size: 0.95rem;">${price}</div></div></div></a></div>`;
-                });
-            }
+
+        function handleSearchSubmit(e) {
+            e.preventDefault();
+            currentSearch = document.getElementById('search-input').value.trim();
+            loadProducts(1);
         }
 
-        // --- LOAD KATEGORI DINAMIS (Grid & Modal) ---
-        function loadCategoryGrid() {
-            fetch('/api/products/categories').then(res => res.json()).then(data => {
-                if (data.data) {
-                    allCategories = data.data; // Simpan untuk Modal
-                    const grid = document.getElementById('categoryGrid');
-                    const select = document.getElementById('category-filter');
-                    
-                    // Ambil 5 kategori pertama untuk tampil di beranda
-                    const displayCats = allCategories.slice(0, 5);
-                    
-                    // Bersihkan grid (kecuali tombol Lihat Semua yang terakhir)
-                    const btnSeeAll = grid.lastElementChild;
-                    grid.innerHTML = '';
-                    
-                    displayCats.forEach(cat => {
-                        // Pilih ikon acak berdasarkan nama kategori
-                        let icon = 'bi-tag';
-                        if(cat.toLowerCase().includes('fashion')) icon = 'bi-bag';
-                        else if(cat.toLowerCase().includes('elektronik')) icon = 'bi-phone';
-                        else if(cat.toLowerCase().includes('kecantikan')) icon = 'bi-flower1';
-                        else if(cat.toLowerCase().includes('rumah')) icon = 'bi-house';
-                        else if(cat.toLowerCase().includes('box') || cat.toLowerCase().includes('penyimpanan')) icon = 'bi-box-seam';
-                        
+        function handleSearchInput() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearch = document.getElementById('search-input').value.trim();
+                loadProducts(1);
+            }, 350);
+        }
+
+        function filterByCategory(cat, btnEl) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-tab-btn').forEach(p => p.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            loadProducts(1);
+        }
+
+        function resolveProductImg(p) {
+            if (p.image_url && p.image_url.trim() !== '') return p.image_url;
+            return `https://picsum.photos/seed/${p.id}/400/300`;
+        }
+
+        function loadProducts(page = 1) {
+            currentPage = page;
+            const grid = document.getElementById('product-grid');
+            const loader = document.getElementById('loading-grid');
+            loader.classList.remove('d-none');
+            grid.innerHTML = '';
+
+            let url = `/api/products?page=${page}&per_page=12`;
+            if (currentSearch) url += `&search=${encodeURIComponent(currentSearch)}`;
+            if (currentCategory) url += `&category=${encodeURIComponent(currentCategory)}`;
+            if (sellerFilter) url += `&seller_id=${encodeURIComponent(sellerFilter)}`;
+
+            fetch(url)
+                .then(res => res.json())
+                .then(response => {
+                    loader.classList.add('d-none');
+                    const items = response.data || [];
+                    const meta = response.meta || { current_page: 1, total_pages: 1, total_items: items.length };
+                    const wishlist = getWishlist();
+
+                    document.getElementById('catalog-heading').innerText = currentSearch
+                        ? `Hasil Pencarian "${currentSearch}"`
+                        : (sellerFilter ? 'Etalase Toko' : 'Rekomendasi Untukmu');
+                    document.getElementById('catalog-count-info').innerText = `Menampilkan ${items.length} dari ${meta.total_items || items.length} produk`;
+
+                    if (items.length === 0) {
+                        grid.innerHTML = `
+                            <div class="col-12 text-center py-5 bg-light rounded-4 border">
+                                <i class="bi bi-search fs-1 text-muted"></i>
+                                <h6 class="fw-bold mt-2">Produk tidak ditemukan</h6>
+                                <p class="text-muted small mb-0">Coba kata kunci atau kategori lain.</p>
+                            </div>`;
+                        document.getElementById('pagination-container').innerHTML = '';
+                        return;
+                    }
+
+                    items.forEach(p => {
+                        const imgUrl = resolveProductImg(p);
+                        const isWished = wishlist.some(w => String(w.id) === String(p.id));
+                        const soldCount = (Number(String(p.id).slice(-3)) % 450) + 50;
+                        const safeName = (p.name || 'Produk').replace(/'/g, "\\'");
+
                         grid.innerHTML += `
-                            <a href="#" class="cat-item" onclick="applyCategory('${cat}'); return false;">
-                                <div class="cat-icon-box"><i class="bi ${icon}"></i></div>
-                                <span class="cat-name">${cat}</span>
-                            </a>
-                        `;
-                        
-                        // Isi dropdown select
-                        select.innerHTML += `<option value="${cat}">${cat}</option>`;
-                    });
-                    
-                    // Kembalikan tombol Lihat Semua
-                    grid.appendChild(btnSeeAll);
-                }
-            });
-        }
-
-        let currentPage = 1, currentSearch = "", currentCategory = "", currentSort = "";
-        function applyFilter() { currentCategory = document.getElementById('category-filter').value; currentSort = document.getElementById('sort-filter').value; currentPage = 1; fetchProducts(); }
-        function renderSkeletons() { const list = document.getElementById('product-list'); list.innerHTML = ''; for (let i = 0; i < 8; i++) { list.innerHTML += `<div class="col-6 col-md-4 col-lg-3"><div class="card product-card p-2"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width: 50%;"></div></div></div>`; } }
-
-        function fetchProducts() {
-            renderSkeletons(); 
-            let url = `/api/products?page=${currentPage}&per_page=12&search=${currentSearch}&category=${currentCategory}&sort=${currentSort}`;
-            if (sellerId) url += `&seller_id=${sellerId}`; 
-            
-            fetch(url).then(res => res.json()).then(responseData => {
-                const list = document.getElementById('product-list'); list.innerHTML = '';
-                let products = responseData.data || []; let meta = responseData.meta || { current_page: 1, total_pages: 1 };
-                if(products.length === 0) { list.innerHTML = `<div class="col-12 text-center py-5"><h5 class="text-muted">Produk tidak ditemukan.</h5></div>`; document.getElementById('pagination-container').style.display = 'none'; return; }
-                products.forEach(product => {
-                    const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(product.price || 0);
-                    const imageUrl = product.image_url ? product.image_url : `https://picsum.photos/seed/${product.id}/400/300`;
-                    const sold = Math.floor(Math.random() * 500) + 10; 
-                    list.innerHTML += `
-                        <div class="col-6 col-md-4 col-lg-3">
-                            <div class="card product-card">
-                                <button class="btn-wishlist" data-id="${product.id}" onclick="toggleWishlist(event, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${imageUrl}')"><i class="bi bi-heart"></i></button>
-                                <a href="/api/products/view/${product.id}" class="text-decoration-none">
-                                    <img src="${imageUrl}" class="product-img" alt="${product.name}" loading="lazy">
-                                    <div class="card-body p-2 d-flex flex-column">
-                                        <h6 class="product-title" title="${product.name}">${product.name}</h6>
-                                        <div class="product-price">${price}</div>
-                                        <div class="d-flex justify-content-between align-items-center mt-1">
-                                            <div class="product-meta"><i class="bi bi-star-fill text-warning"></i> ${product.rating || 0} | Terjual ${sold}</div>
-                                            <span class="product-location">Jakarta</span>
+                            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                                <a href="/api/products/view/${p.id}" class="text-decoration-none">
+                                    <div class="product-card">
+                                        <div class="product-img-wrap">
+                                            <img src="${imgUrl}" class="product-img" alt="${p.name}" loading="lazy">
+                                            <button type="button" class="btn-wish-float ${isWished ? 'active' : ''}"
+                                                onclick="toggleCardWishlist(event, '${p.id}', '${safeName}', ${p.price || 0}, '${imgUrl}')"
+                                                title="Simpan ke Wishlist">
+                                                <i class="bi ${isWished ? 'bi-heart-fill' : 'bi-heart'}"></i>
+                                            </button>
                                         </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>`;
-                });
-                checkWishlistUI(); renderPagination(meta.current_page, meta.total_pages);
-            }).catch(err => { list.innerHTML = `<div class="col-12 text-center py-5"><div class="alert alert-danger">Gagal memuat produk.</div></div>`; });
-        }
-
-        function renderPagination(current, total) {
-            const pagContainer = document.getElementById('pagination-container'); const pagList = document.getElementById('pagination-list');
-            if (total <= 1) { pagContainer.style.display = 'none'; return; }
-            pagContainer.style.display = 'flex'; pagList.innerHTML = '';
-            pagList.innerHTML += `<li class="page-item ${current === 1 ? 'disabled' : ''}"><button class="page-link" onclick="goToPage(${current - 1})"><i class="bi bi-chevron-left"></i></button></li>`;
-            let startPage = Math.max(1, current - 2), endPage = Math.min(total, startPage + 4);
-            if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
-            if (startPage > 1) { pagList.innerHTML += `<li class="page-item"><button class="page-link" onclick="goToPage(1)">1</button></li>`; if (startPage > 2) pagList.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`; }
-            for (let i = startPage; i <= endPage; i++) { pagList.innerHTML += `<li class="page-item ${i === current ? 'active' : ''}"><button class="page-link" onclick="goToPage(${i})">${i}</button></li>`; }
-            if (endPage < total) { if (endPage < total - 1) pagList.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`; pagList.innerHTML += `<li class="page-item"><button class="page-link" onclick="goToPage(${total})">${total}</button></li>`; }
-            pagList.innerHTML += `<li class="page-item ${current === total ? 'disabled' : ''}"><button class="page-link" onclick="goToPage(${current + 1})"><i class="bi bi-chevron-right"></i></button></li>`;
-        }
-
-        function goToPage(page) { if (page < 1) return; currentPage = page; fetchProducts(); document.getElementById('catalog-header').scrollIntoView({ behavior: 'smooth' }); }
-        
-        // FETCH AI REKOMENDASI
-        if(!sellerId) {
-            fetch('/api/products/recommendations/popular?k=10').then(res => res.json()).then(data => { 
-                if (data && data.data && data.data.length > 0) {
-                    document.getElementById('ai-section').classList.remove('d-none');
-                    const aiList = document.getElementById('ai-recommendation-list');
-                    
-                    data.data.forEach(product => {
-                        const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(product.price || 0);
-                        const sold = Math.floor(Math.random() * 500) + 10;
-                        aiList.innerHTML += `
-                            <div class="ai-scroll-item">
-                                <a href="/api/products/view/${product.id}" class="text-decoration-none">
-                                    <div class="card product-card">
-                                        <div style="position:relative;">
-                                            <img src="https://picsum.photos/seed/${product.id}/300/200" class="product-img">
-                                            <span class="badge bg-success position-absolute top-0 start-0 m-2" style="font-size:0.6rem;"><i class="bi bi-stars text-warning"></i> AI</span>
-                                        </div>
-                                        <div class="card-body p-2">
-                                            <h6 class="product-title" title="${product.name}">${product.name}</h6>
-                                            <div class="product-price" style="font-size: 1rem;">${price}</div>
-                                            <div class="product-meta"><i class="bi bi-star-fill text-warning"></i> 5.0 | Terjual ${sold}</div>
+                                        <div class="p-2.5 p-3 d-flex flex-column flex-grow-1">
+                                            <div class="product-title mb-1">${p.name}</div>
+                                            <div class="product-price mb-1">${formatRupiah(p.price)}</div>
+                                            <div class="mb-2"><span class="badge-cashback">Bebas Ongkir</span></div>
+                                            <div class="mt-auto small text-muted" style="font-size: 0.78rem;">
+                                                <div class="text-truncate"><i class="bi bi-patch-check-fill text-primary"></i> ${p.seller_name || 'Jakarta'}</div>
+                                                <div class="mt-1"><i class="bi bi-star-fill text-warning"></i> ${p.rating || 0} • ${soldCount} terjual</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </a>
                             </div>`;
                     });
-                }
-            }).catch(err => console.log("AI offline."));
+
+                    renderPagination(meta.current_page, meta.total_pages);
+                })
+                .catch(() => {
+                    loader.classList.add('d-none');
+                    grid.innerHTML = '<div class="col-12 text-center text-danger py-4">Gagal memuat daftar produk.</div>';
+                });
         }
 
-        fetchProducts();
+        function renderPagination(current, total) {
+            const pag = document.getElementById('pagination-container');
+            pag.innerHTML = '';
+            if (total <= 1) return;
+
+            pag.innerHTML += `<li class="page-item ${current === 1 ? 'disabled' : ''}"><button class="page-link" onclick="loadProducts(${current - 1})"><i class="bi bi-chevron-left"></i></button></li>`;
+
+            let startPage = Math.max(1, current - 2);
+            let endPage = Math.min(total, startPage + 4);
+            if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+            if (startPage > 1) {
+                pag.innerHTML += `<li class="page-item"><button class="page-link" onclick="loadProducts(1)">1</button></li>`;
+                if (startPage > 2) pag.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                pag.innerHTML += `<li class="page-item ${i === current ? 'active' : ''}"><button class="page-link" onclick="loadProducts(${i})">${i}</button></li>`;
+            }
+
+            if (endPage < total) {
+                if (endPage < total - 1) pag.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                pag.innerHTML += `<li class="page-item"><button class="page-link" onclick="loadProducts(${total})">${total}</button></li>`;
+            }
+
+            pag.innerHTML += `<li class="page-item ${current === total ? 'disabled' : ''}"><button class="page-link" onclick="loadProducts(${current + 1})"><i class="bi bi-chevron-right"></i></button></li>`;
+        }
     </script>
 </body>
 </html>

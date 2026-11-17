@@ -3,119 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wishlist - TokoPintar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Wishlist Saya - TokoPintar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        :root { --primary-color: #03AC0E; --primary-hover: #02960C; --bg-color: #F7F7F7; --text-dark: #212121; }
-        body { font-family: 'Open Sans', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
-        .navbar-custom { background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 10px 0; }
-        .navbar-brand { font-weight: 700; font-size: 1.5rem; color: var(--primary-color) !important; display: flex; align-items: center; gap: 8px; }
-        
-        .product-card { border: 1px solid #E0E0E0; border-radius: 8px; background: #ffffff; transition: all 0.2s ease; overflow: hidden; height: 100%; cursor: pointer; position: relative; }
-        .product-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #d1d5db; transform: translateY(-2px); }
-        .product-img { height: 180px; object-fit: cover; width: 100%; border-bottom: 1px solid #f0f0f0; }
-        .product-title { font-weight: 400; font-size: 0.9rem; color: var(--text-dark); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; margin-bottom: 4px; }
-        .product-price { font-weight: 700; font-size: 1.1rem; color: var(--text-dark); }
-        
-        .btn-wishlist { position: absolute; top: 10px; right: 10px; background: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #dc3545; border: none; transition: 0.2s; z-index: 10; }
-        .btn-wishlist:hover { transform: scale(1.1); }
+        :root {
+            --primary-color: #03AC0E;
+            --primary-hover: #028A0B;
+            --bg-color: #F8FAFC;
+            --text-dark: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
+        .navbar-glass {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+        .navbar-brand { font-weight: 800; font-size: 1.5rem; color: var(--primary-color) !important; display: flex; align-items: center; gap: 8px; }
+        .wish-card {
+            background: #fff; border: 1px solid var(--border-color); border-radius: 16px;
+            overflow: hidden; transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); height: 100%;
+            display: flex; flex-direction: column;
+        }
+        .wish-card:hover { transform: translateY(-5px); box-shadow: 0 18px 34px -12px rgba(15, 23, 42, 0.12); border-color: #CBD5E1; }
+        .wish-img { width: 100%; height: 195px; object-fit: cover; background: #F1F5F9; }
+        .btn-luxury {
+            background: linear-gradient(135deg, #03AC0E 0%, #028A0B 100%);
+            color: #fff; font-weight: 700; border-radius: 10px; border: none; padding: 8px 14px; transition: 0.2s;
+        }
+        .btn-luxury:hover { color: #fff; transform: translateY(-1px); }
 
-        .footer { background-color: #ffffff; border-top: 1px solid #E0E0E0; padding: 30px 0; margin-top: 50px; font-size: 0.85rem; color: #6D7588; }
+        .footer-tokped { background-color: #ffffff; border-top: 2px solid var(--primary-color); padding: 45px 0 30px; margin-top: 70px; font-size: 0.85rem; color: var(--text-muted); }
+        .footer-tokped h6 { font-weight: 700; color: var(--text-dark); margin-bottom: 14px; font-size: 0.95rem; }
+        .footer-tokped ul { list-style: none; padding: 0; margin: 0; }
+        .footer-tokped ul li { margin-bottom: 8px; }
+        .footer-tokped ul li a { color: var(--text-muted); text-decoration: none; }
+        .footer-tokped ul li a:hover { color: var(--primary-color); }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-custom sticky-top mb-4">
-        <div class="container">
+    <nav class="navbar navbar-glass sticky-top mb-4">
+        <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand" href="/api/products/view"><i class="bi bi-bag-heart-fill"></i> TokoPintar</a>
             <div class="d-flex align-items-center gap-3">
-                <a href="/api/products/wishlist" class="text-dark fs-5 position-relative" title="Wishlist">
-                    <i class="bi bi-heart-fill text-danger"></i>
-                </a>
-                <a href="/api/products/cart" class="text-dark fs-5 position-relative">
-                    <i class="bi bi-cart3"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-badge" style="display: none; font-size: 0.6rem;">0</span>
-                </a>
-                <a href="#" class="text-dark fs-5"><i class="bi bi-person-circle"></i></a>
+                <a href="/api/products/view" class="btn btn-sm btn-outline-success fw-bold rounded-3"><i class="bi bi-arrow-left"></i> Katalog</a>
+                <a href="/api/products/cart" class="text-dark fs-5"><i class="bi bi-cart3"></i></a>
+                <a href="/api/orders/view" class="text-dark fs-5"><i class="bi bi-bag-check"></i></a>
             </div>
         </div>
     </nav>
 
     <div class="container mb-5">
-        <h3 class="fw-bold mb-4">Favorit Saya (Wishlist)</h3>
-        <div class="row g-3" id="wishlist-list"></div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold mb-1"><i class="bi bi-heart-fill text-danger me-1"></i> Wishlist Saya</h3>
+                <p class="text-muted small mb-0">Simpan produk impianmu dan pindahkan ke keranjang kapan saja.</p>
+            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-bold" id="wish-count">0 Produk</span>
+        </div>
+
+        <div class="row g-3" id="wishlist-grid"></div>
     </div>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="liveToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="wishToast" class="toast align-items-center text-white bg-success border-0" role="alert">
             <div class="d-flex">
-                <div class="toast-body" id="toast-message">Berhasil!</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <div class="toast-body" id="wish-toast-msg">Berhasil!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="container text-center">
-            <h5 class="fw-bold text-success mb-2"><i class="bi bi-bag-heart-fill"></i> TokoPintar</h5>
-            <p class="mb-0">&copy; 2026 TokoPintar. Hak Cipta Dilindungi.</p>
+    <footer class="footer-tokped">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-6 col-md-3">
+                    <h6>TokoPintar</h6>
+                    <ul>
+                        <li><a href="/api/products/about">Tentang TokoPintar</a></li>
+                        <li><a href="/api/products/view">Katalog Produk</a></li>
+                        <li><a href="/api/admin/dashboard">Portal Pedagang</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Beli & Jual</h6>
+                    <ul>
+                        <li><a href="/api/products/cart">Keranjang Belanja</a></li>
+                        <li><a href="/api/products/wishlist">Wishlist Saya</a></li>
+                        <li><a href="/api/orders/view">Lacak Status Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Bantuan & Keamanan</h6>
+                    <ul>
+                        <li><a href="/api/profile/view">Pengaturan Akun & Alamat</a></li>
+                        <li><a href="/api/products/about#fitur">Keunggulan AI & GPS</a></li>
+                        <li><a href="/api/products/about#cara-kerja">Cara Berbelanja</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-bag-heart-fill"></i> TokoPintar</h5>
+                    <p class="small mb-2">Platform e-commerce cerdas dengan rekomendasi AI dan pelacakan lokasi pengiriman akurat.</p>
+                </div>
+            </div>
+            <div class="border-top pt-3 text-center small">&copy; 2026 TokoPintar. Hak Cipta Dilindungi.</div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function showToast(message) {
-            document.getElementById('toast-message').innerText = message;
-            new bootstrap.Toast(document.getElementById('liveToast')).show();
-        }
+        const formatRupiah = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v || 0);
 
-        function updateCartBadge() {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            let badge = document.getElementById('cart-badge');
-            let totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-            if (totalItems > 0) { badge.style.display = 'inline-block'; badge.innerText = totalItems; } 
-            else { badge.style.display = 'none'; }
+        function showToast(msg, ok = true) {
+            const el = document.getElementById('wishToast');
+            document.getElementById('wish-toast-msg').innerText = msg;
+            el.classList.toggle('bg-success', ok);
+            el.classList.toggle('bg-danger', !ok);
+            new bootstrap.Toast(el).show();
         }
-        document.addEventListener('DOMContentLoaded', updateCartBadge);
 
         function renderWishlist() {
-            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            let list = document.getElementById('wishlist-list');
+            const list = JSON.parse(localStorage.getItem('wishlist')) || [];
+            const grid = document.getElementById('wishlist-grid');
+            document.getElementById('wish-count').innerText = `${list.length} Produk`;
 
-            if (wishlist.length === 0) {
-                list.innerHTML = `<div class="col-12 text-center py-5"><h5 class="text-muted">Belum ada produk favorit.</h5><a href="/api/products/view" class="btn btn-outline-success mt-3">Cari Produk</a></div>`;
+            if (list.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12">
+                        <div class="bg-white rounded-4 border p-5 text-center">
+                            <i class="bi bi-heart text-muted" style="font-size: 3rem;"></i>
+                            <h5 class="fw-bold mt-3">Wishlist kamu masih kosong</h5>
+                            <p class="text-muted small">Klik ikon hati pada produk yang kamu suka untuk menyimpannya di sini.</p>
+                            <a href="/api/products/view" class="btn-luxury text-decoration-none mt-1 d-inline-block">Jelajahi Produk</a>
+                        </div>
+                    </div>`;
                 return;
             }
 
-            list.innerHTML = '';
-            wishlist.forEach((product, index) => {
-                const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(product.price || 0);
-                list.innerHTML += `
+            grid.innerHTML = '';
+            list.forEach(item => {
+                const safeName = (item.name || 'Produk').replace(/'/g, "\\'");
+                grid.innerHTML += `
                     <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card product-card">
-                            <button class="btn-wishlist" onclick="removeWishlist(${index})">
-                                <i class="bi bi-heart-fill"></i>
-                            </button>
-                            <a href="/api/products/view/${product.id}" class="text-decoration-none">
-                                <img src="${product.image}" class="product-img" alt="${product.name}" loading="lazy">
-                                <div class="card-body p-3 d-flex flex-column">
-                                    <h6 class="product-title" title="${product.name}">${product.name}</h6>
-                                    <div class="product-price mb-2">${price}</div>
-                                </div>
+                        <div class="wish-card">
+                            <a href="/api/products/view/${item.id}">
+                                <img src="${item.image}" class="wish-img" alt="${item.name}">
                             </a>
+                            <div class="p-3 d-flex flex-column flex-grow-1">
+                                <a href="/api/products/view/${item.id}" class="fw-bold text-dark text-decoration-none small mb-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${item.name}</a>
+                                <div class="fw-bold text-success fs-6 mb-3">${formatRupiah(item.price)}</div>
+                                <div class="d-flex gap-2 mt-auto">
+                                    <button type="button" class="btn-luxury btn-sm flex-grow-1" onclick="moveToCart('${item.id}', '${safeName}', ${item.price}, '${item.image}')">
+                                        + Keranjang
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-3" onclick="removeWish('${item.id}')" title="Hapus">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
-        function removeWishlist(index) {
-            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            wishlist.splice(index, 1);
-            localStorage.setItem('wishlist', JSON.stringify(wishlist));
-            showToast('Dihapus dari Favorit');
+        function moveToCart(id, name, price, image) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existing = cart.find(i => String(i.id) === String(id));
+            if (existing) {
+                existing.qty += 1;
+                existing.selected = true;
+            } else {
+                cart.push({ id: String(id), name, price, image, qty: 1, selected: true });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            showToast('Produk dipindahkan ke keranjang!');
+        }
+
+        function removeWish(id) {
+            const list = (JSON.parse(localStorage.getItem('wishlist')) || []).filter(i => String(i.id) !== String(id));
+            localStorage.setItem('wishlist', JSON.stringify(list));
             renderWishlist();
+            showToast('Dihapus dari wishlist.', false);
         }
 
         document.addEventListener('DOMContentLoaded', renderWishlist);

@@ -4,224 +4,957 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Produk - TokoPintar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        :root { --primary-color: #03AC0E; --primary-hover: #02960C; --bg-color: #F7F7F7; --text-dark: #212121; --text-muted: #6D7588; }
-        body { font-family: 'Open Sans', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
-        .navbar-custom { background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 10px 0; }
-        .navbar-brand { font-weight: 700; font-size: 1.5rem; color: var(--primary-color) !important; display: flex; align-items: center; gap: 8px; }
-        .btn-outline-tokped { border: 1px solid var(--primary-color); color: var(--primary-color); font-weight: 600; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px; text-decoration: none; }
-        .btn-solid-tokped { background-color: var(--primary-color); color: white; font-weight: 600; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px; border: none; text-decoration: none; }
-        .breadcrumb { font-size: 0.85rem; background: transparent; padding: 0; margin-bottom: 15px; }
-        .breadcrumb-item a { color: var(--text-muted); text-decoration: none; }
-        .breadcrumb-item a:hover { color: var(--primary-color); }
-        .detail-card { border: 1px solid #E0E0E0; border-radius: 8px; background: #fff; padding: 20px; }
-        .detail-img { height: auto; max-height: 400px; object-fit: contain; width: 100%; border-radius: 8px; }
-        .price-tag { font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
-        .btn-buy { background-color: var(--primary-color); color: white; font-weight: 700; padding: 12px 20px; border-radius: 8px; border: none; transition: 0.2s; width: 100%; font-size: 1rem; }
-        .btn-buy:hover { background-color: var(--primary-hover); color: white; }
-        .btn-secondary-tokped { background-color: #fff; color: var(--primary-color); border: 1px solid var(--primary-color); font-weight: 700; padding: 12px 20px; border-radius: 8px; transition: 0.2s; width: 100%; font-size: 1rem; }
-        .btn-secondary-tokped:hover { background-color: #f0fdf4; }
-        .similar-card { border: 1px solid #E0E0E0; border-radius: 8px; transition: 0.2s; height: 100%; cursor: pointer; background: #fff; }
-        .similar-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
-        .similar-img { height: 120px; width: 100%; object-fit: cover; border-radius: 8px 8px 0 0; border-bottom: 1px solid #f0f0f0; }
-        .footer { background-color: #ffffff; border-top: 1px solid #E0E0E0; padding: 30px 0; margin-top: 50px; font-size: 0.85rem; color: #6D7588; }
+        :root {
+            --primary-color: #03AC0E;
+            --primary-hover: #02960C;
+            --bg-color: #FFFFFF;
+            --surface-muted: #F7F7F7;
+            --text-dark: #212121;
+            --text-muted: #6D7588;
+            --border-color: #E5E7E9;
+        }
+        body { font-family: 'Open Sans', sans-serif; background-color: var(--bg-color); color: var(--text-dark); scroll-behavior: smooth; }
+        
+        /* TOP BAR & MAIN NAVBAR */
+        .top-promo-bar { background-color: #F3F4F5; font-size: 0.78rem; color: var(--text-muted); padding: 5px 0; border-bottom: 1px solid var(--border-color); }
+        .navbar-custom { background-color: #ffffff; border-bottom: 1px solid var(--border-color); padding: 12px 0; z-index: 1030; }
+        .navbar-brand { font-weight: 800; font-size: 1.55rem; color: var(--primary-color) !important; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
+        .search-bar-wrap { max-width: 520px; width: 100%; }
+        .search-bar-wrap .form-control { border-radius: 8px; border: 1px solid #BFC9D9; font-size: 0.88rem; padding: 7px 14px; }
+        .search-bar-wrap .form-control:focus { border-color: var(--primary-color); box-shadow: none; }
+        .btn-outline-tokped { border: 1px solid var(--primary-color); color: var(--primary-color); font-weight: 700; font-size: 0.85rem; padding: 6px 14px; border-radius: 8px; text-decoration: none; transition: 0.15s; }
+        .btn-outline-tokped:hover { background-color: #f0fdf4; color: var(--primary-color); }
+        .btn-solid-tokped { background-color: var(--primary-color); color: white; font-weight: 700; font-size: 0.85rem; padding: 6px 14px; border-radius: 8px; border: none; text-decoration: none; transition: 0.15s; }
+        .btn-solid-tokped:hover { background-color: var(--primary-hover); color: white; }
+
+        /* STICKY SUB-NAVBAR (DETAIL | ULASAN | REKOMENDASI) */
+        .sticky-subnav {
+            position: sticky;
+            top: 63px;
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1020;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .subnav-tab {
+            padding: 12px 18px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-bottom: 3px solid transparent;
+            display: inline-block;
+            transition: 0.15s;
+        }
+        .subnav-tab:hover, .subnav-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb { font-size: 0.82rem; background: transparent; padding: 0; margin-bottom: 18px; }
+        .breadcrumb-item a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+        .breadcrumb-item.active { color: var(--text-muted); }
+
+        /* KOLOM KIRI: GALERI PRODUK */
+        .main-gallery-box {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .detail-img { width: 100%; height: 100%; object-fit: contain; transition: 0.2s; }
+        .thumb-btn {
+            width: 60px; height: 60px; border-radius: 8px; border: 2px solid transparent;
+            overflow: hidden; cursor: pointer; padding: 0; background: #f8fafc;
+        }
+        .thumb-btn.active { border-color: var(--primary-color); }
+        .thumb-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* KOLOM TENGAH: INFO PRODUK & TOKO */
+        .product-title-main { font-size: 1.25rem; font-weight: 700; line-height: 1.4; color: var(--text-dark); }
+        .price-tag-main { font-size: 1.85rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; }
+        .info-tabs { border-bottom: 1px solid var(--border-color); display: flex; gap: 20px; }
+        .info-tab-btn {
+            background: none; border: none; padding: 8px 4px; font-weight: 700; font-size: 0.9rem;
+            color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer;
+        }
+        .info-tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .seller-box {
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 0;
+        }
+        .seller-avatar {
+            width: 46px; height: 46px; border-radius: 50%; background: #e8f8ea;
+            color: var(--primary-color); display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.2rem; border: 1px solid #bce8c2;
+        }
+
+        /* KOLOM KANAN: CARD ATUR JUMLAH & CATATAN */
+        .checkout-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            background: #fff;
+            position: sticky;
+            top: 120px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        .qty-box {
+            display: inline-flex; align-items: center; border: 1px solid #BFC9D9;
+            border-radius: 8px; padding: 2px 6px;
+        }
+        .qty-box button {
+            border: none; background: none; color: var(--primary-color);
+            font-weight: 800; font-size: 1.1rem; padding: 0 8px; cursor: pointer;
+        }
+        .qty-box button:disabled { color: #cbd5e1; cursor: not-allowed; }
+        .qty-box input {
+            width: 42px; text-align: center; border: none; font-weight: 700; font-size: 0.92rem;
+        }
+        .qty-box input:focus { outline: none; }
+        .btn-buy-solid {
+            background-color: var(--primary-color); color: #fff; font-weight: 700;
+            border: none; border-radius: 8px; padding: 10px; width: 100%; font-size: 0.95rem; transition: 0.15s;
+        }
+        .btn-buy-solid:hover:not(:disabled) { background-color: var(--primary-hover); color: #fff; }
+        .btn-buy-solid:disabled { background-color: #cbd5e1; cursor: not-allowed; }
+        .btn-buy-outline {
+            background-color: #fff; color: var(--primary-color); font-weight: 700;
+            border: 1px solid var(--primary-color); border-radius: 8px; padding: 10px; width: 100%; font-size: 0.95rem; transition: 0.15s;
+        }
+        .btn-buy-outline:hover:not(:disabled) { background-color: #f0fdf4; }
+        .btn-buy-outline:disabled { border-color: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
+        .action-mini-btn {
+            background: none; border: none; font-size: 0.82rem; font-weight: 700;
+            color: var(--text-dark); display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+        }
+        .action-mini-btn:hover { color: var(--primary-color); }
+
+        /* ULASAN & REKOMENDASI */
+        .review-media-thumb { width: 88px; height: 88px; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer; transition: 0.15s; }
+        .review-media-thumb:hover { transform: scale(1.04); border-color: var(--primary-color); }
+        .star-picker i { font-size: 1.6rem; color: #cbd5e1; cursor: pointer; transition: 0.15s; margin-right: 4px; }
+        .star-picker i.selected { color: #f59e0b; }
+
+        .similar-card { border: 1px solid var(--border-color); border-radius: 10px; transition: 0.2s; height: 100%; background: #fff; overflow: hidden; }
+        .similar-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.08); transform: translateY(-2px); }
+        .similar-img { height: 165px; width: 100%; object-fit: cover; border-bottom: 1px solid #f0f0f0; background: #f8fafc; }
+
+        /* FOOTER MULTI-KOLOM ALA TOKOPEDIA */
+        .footer-tokped { background-color: #ffffff; border-top: 1px solid var(--border-color); padding: 45px 0 30px; margin-top: 60px; font-size: 0.85rem; color: var(--text-muted); }
+        .footer-tokped h6 { font-weight: 700; color: var(--text-dark); margin-bottom: 14px; font-size: 0.95rem; }
+        .footer-tokped ul { list-style: none; padding: 0; margin: 0; }
+        .footer-tokped ul li { margin-bottom: 8px; }
+        .footer-tokped ul li a { color: var(--text-muted); text-decoration: none; }
+        .footer-tokped ul li a:hover { color: var(--primary-color); }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-custom sticky-top mb-4">
-        <div class="container">
+    <!-- TOP BAR -->
+    <div class="top-promo-bar d-none d-md-block">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div><i class="bi bi-phone"></i> Gratis Ongkir + Banyak Promo belanja di <strong>TokoPintar</strong></div>
+            <div class="d-flex gap-3">
+                <a href="/api/products/about" class="text-muted text-decoration-none">Tentang TokoPintar</a>
+                <a href="/api/admin/dashboard" class="text-muted text-decoration-none">Mulai Berjualan</a>
+                <a href="/api/orders/view" class="text-muted text-decoration-none">Lacak Pesanan</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVBAR -->
+    <nav class="navbar navbar-custom sticky-top">
+        <div class="container d-flex align-items-center justify-content-between gap-3">
             <a class="navbar-brand" href="/api/products/view"><i class="bi bi-bag-heart-fill"></i> TokoPintar</a>
+
+            <form class="search-bar-wrap d-none d-md-flex" action="/api/products/view" method="GET">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="Cari produk di TokoPintar...">
+                </div>
+            </form>
+
             <div class="d-flex align-items-center gap-3">
                 <a href="/api/products/wishlist" class="text-dark fs-5 position-relative" title="Wishlist"><i class="bi bi-heart"></i></a>
-                <a href="/api/products/cart" class="text-dark fs-5 position-relative">
+                <a href="/api/products/cart" class="text-dark fs-5 position-relative" title="Keranjang">
                     <i class="bi bi-cart3"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-badge" style="display: none; font-size: 0.6rem;">0</span>
                 </a>
-                <!-- AUTH BUTTONS -->
-                <div id="auth-buttons" class="d-flex gap-2">
-                    <a href="/api/auth/view/login" class="btn-outline-tokped d-none d-md-block">Masuk</a>
-                    <a href="/api/auth/view/register" class="btn-solid-tokped d-none d-md-block">Daftar</a>
+
+                <div class="vr d-none d-sm-block"></div>
+
+                <div id="auth-buttons" class="d-flex gap-2 align-items-center">
+                    <a href="/api/auth/view/login" class="btn-outline-tokped">Masuk</a>
+                    <a href="/api/auth/view/register" class="btn-solid-tokped">Daftar</a>
                 </div>
+
                 <div id="user-profile" class="d-none align-items-center gap-2">
-                    <span class="fw-bold" id="nav-username" style="font-size: 0.9rem;"></span>
-                    <a href="/api/admin/dashboard" id="btn-dashboard" class="btn btn-sm btn-warning d-none">Dashboard</a>
-                    <button class="btn btn-sm btn-outline-danger" onclick="logout()">Logout</button>
+                    <a href="/api/orders/view" class="btn btn-sm btn-outline-success fw-bold d-none d-lg-inline-block"><i class="bi bi-bag-check"></i> Pesanan</a>
+                    <a href="/api/admin/dashboard" id="btn-dashboard" class="btn btn-sm btn-warning fw-bold d-none">Dashboard</a>
+                    <a href="/api/profile/view" class="fw-bold text-dark text-decoration-none d-flex align-items-center gap-1" title="Akun Saya">
+                        <i class="bi bi-person-circle text-success fs-5"></i>
+                        <span id="nav-username" style="font-size: 0.88rem;"></span>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="logout()">Logout</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="container mb-5">
+    <!-- STICKY SUB-NAVBAR (DETAIL PRODUK | ULASAN | REKOMENDASI) -->
+    <div class="sticky-subnav">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="fw-bold text-truncate d-none d-lg-block" style="max-width: 340px; font-size: 0.9rem;" id="sticky-prod-title">Memuat produk...</div>
+            <div class="d-flex">
+                <a href="#sec-detail" class="subnav-tab active" onclick="setActiveSubnav(this)">Detail Produk</a>
+                <a href="#sec-ulasan" class="subnav-tab" onclick="setActiveSubnav(this)">Ulasan (<span id="nav-review-count">0</span>)</a>
+                <a href="#sec-rekomendasi" class="subnav-tab" onclick="setActiveSubnav(this)">Rekomendasi</a>
+            </div>
+            <div class="small text-muted d-none d-md-block">
+                <i class="bi bi-geo-alt text-success"></i> Dikirim ke <strong class="text-dark" id="header-ship-dest">Alamat Anda</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-4">
+        <!-- BREADCRUMB -->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/api/products/view">Beranda</a></li>
                 <li class="breadcrumb-item"><a href="#" id="breadcrumb-category">Kategori</a></li>
-                <li class="breadcrumb-item active" aria-current="page" id="breadcrumb-name">Produk</li>
+                <li class="breadcrumb-item active text-truncate" style="max-width: 320px;" aria-current="page" id="breadcrumb-name">Produk</li>
             </ol>
         </nav>
 
-        <div class="text-center py-5" id="loading-detail"><div class="spinner-border text-success" role="status"></div><p class="mt-3 text-muted">Memuat informasi produk...</p></div>
-        <div class="alert alert-danger d-none" id="error-detail"><h5 class="alert-heading">Gagal Memuat Data!</h5><p>Pastikan server Python menyala dan ID produk valid.</p></div>
+        <div class="text-center py-5" id="loading-detail">
+            <div class="spinner-border text-success" role="status"></div>
+            <p class="mt-3 text-muted">Memuat detail produk...</p>
+        </div>
+        <div class="alert alert-danger d-none" id="error-detail">
+            <h5 class="alert-heading">Gagal Memuat Data!</h5>
+            <p class="mb-0">Pastikan server Python menyala dan ID produk valid.</p>
+        </div>
 
-        <div class="card detail-card mb-5 d-none" id="main-product-card">
-            <div class="row g-4">
-                <div class="col-md-5"><img id="product-image" src="" class="detail-img" alt="Product Image"></div>
-                <div class="col-md-7">
-                    <div class="d-flex flex-column h-100">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h4 class="fw-bold mb-1" id="product-name">Nama Produk</h4>
-                            <button class="btn btn-outline-danger" id="btn-wishlist-detail" onclick="toggleWishlistDetail()"><i class="bi bi-heart"></i></button>
+        <!-- 3-KOLOM UTAMA DETAIL PRODUK -->
+        <div class="row g-4 d-none" id="main-product-layout">
+            <!-- KOLOM 1 (KIRI): GALERI FOTO -->
+            <div class="col-lg-4">
+                <div class="sticky-top" style="top: 120px;">
+                    <div class="main-gallery-box mb-3">
+                        <img id="product-image" src="" class="detail-img" alt="Foto Produk">
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="thumb-btn active" onclick="selectGalleryThumb(this)">
+                            <img id="product-thumb-1" src="" alt="Thumb 1">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KOLOM 2 (TENGAH): DETAIL, TOKO & PENGIRIMAN -->
+            <div class="col-lg-5" id="sec-detail">
+                <h1 class="product-title-main mb-2" id="product-name">Nama Produk</h1>
+
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-3" style="font-size: 0.88rem;">
+                    <span>Terjual <strong class="text-dark">100+</strong></span>
+                    <span class="text-muted">•</span>
+                    <span><i class="bi bi-star-fill text-warning"></i> <strong id="product-rating">0</strong> <span class="text-muted">(<span id="rating-count-inline">0</span> ulasan)</span></span>
+                    <span class="text-muted">•</span>
+                    <span class="text-success fw-semibold">Stok Tersedia</span>
+                </div>
+
+                <div class="price-tag-main mb-4" id="product-price">Rp 0</div>
+
+                <!-- TAB DETAIL / SPESIFIKASI -->
+                <div class="info-tabs mb-3">
+                    <button type="button" class="info-tab-btn active" id="btn-tab-desc" onclick="switchInfoTab('desc')">Detail Produk</button>
+                    <button type="button" class="info-tab-btn" id="btn-tab-spec" onclick="switchInfoTab('spec')">Spesifikasi</button>
+                </div>
+
+                <div id="panel-desc" class="mb-4">
+                    <div class="small text-muted mb-2">
+                        Kondisi: <strong class="text-dark">Baru</strong> • Min. Pemesanan: <strong class="text-dark">1 Buah</strong> • Kategori: <a href="#" id="detail-cat-link" class="text-success fw-bold text-decoration-none">Umum</a>
+                    </div>
+                    <p class="text-dark mb-0" style="font-size: 0.92rem; line-height: 1.65; white-space: pre-line;" id="product-desc">Deskripsi produk...</p>
+                </div>
+
+                <div id="panel-spec" class="mb-4 d-none">
+                    <table class="table table-sm table-borderless small mb-0">
+                        <tr><td class="text-muted" style="width: 140px;">ID Produk</td><td class="fw-semibold" id="spec-prod-id">-</td></tr>
+                        <tr><td class="text-muted">Kategori</td><td class="fw-semibold" id="spec-prod-cat">-</td></tr>
+                        <tr><td class="text-muted">Kondisi</td><td class="fw-semibold">Baru & Original</td></tr>
+                        <tr><td class="text-muted">Etalase</td><td class="fw-semibold text-success">Semua Etalase</td></tr>
+                    </table>
+                </div>
+
+                <!-- INFO TOKO PENJUAL -->
+                <div class="seller-box mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="seller-avatar" id="seller-avatar-initial">T</div>
+                            <div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <i class="bi bi-patch-check-fill text-primary"></i>
+                                    <strong id="seller-store-name">TokoPintar Official</strong>
+                                </div>
+                                <div class="small text-success fw-semibold">• Online</div>
+                                <div class="small text-muted mt-1">
+                                    <i class="bi bi-star-fill text-warning"></i> <strong>4.9</strong> rata-rata ulasan
+                                </div>
+                            </div>
                         </div>
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <span class="text-muted" style="font-size: 0.85rem;">Terjual 100+</span>
-                            <span class="text-warning fw-bold" style="font-size: 0.85rem;"><i class="bi bi-star-fill"></i> <span id="product-rating"></span></span>
-                            <span class="text-muted" style="font-size: 0.85rem;">|</span>
-                            <span class="text-muted" style="font-size: 0.85rem;">Stok: <span id="product-stock"></span></span>
+                        <a href="/api/products/view" id="btn-visit-store" class="btn-outline-tokped">Kunjungi Toko</a>
+                    </div>
+                </div>
+
+                <!-- INFO PENGIRIMAN -->
+                <div class="mb-3">
+                    <h6 class="fw-bold mb-2">Pengiriman</h6>
+                    <div class="d-flex align-items-start gap-2 small mb-2">
+                        <i class="bi bi-geo-alt text-muted fs-6"></i>
+                        <div>Dikirim dari <strong>Kota Padang / Gudang Utama</strong></div>
+                    </div>
+                    <div class="d-flex align-items-start gap-2 small">
+                        <i class="bi bi-truck text-muted fs-6"></i>
+                        <div>
+                            <div class="fw-semibold">Ongkir Reguler Rp 8.000 - Rp 12.000</div>
+                            <div class="text-muted">Estimasi tiba 2 - 3 hari kerja • <a href="/api/profile/view" class="text-success fw-bold text-decoration-none">Atur Alamat GPS</a></div>
                         </div>
-                        <div class="price-tag mb-4" id="product-price">Rp 0</div>
-                        <h6 class="fw-bold mb-2">Detail Produk</h6>
-                        <p class="text-muted mb-4" style="font-size: 0.9rem; line-height: 1.6;" id="product-desc">Deskripsi produk...</p>
-                        <div class="mt-auto d-flex flex-column flex-md-row gap-2">
-                            <button class="btn btn-secondary-tokped" id="btn-add-cart" onclick="addToCart()"><i class="bi bi-cart-plus me-2"></i> Masukkan Keranjang</button>
-                            <button class="btn btn-buy">Beli Langsung</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KOLOM 3 (KANAN): CARD ATUR JUMLAH DAN CATATAN -->
+            <div class="col-lg-3">
+                <div class="checkout-card">
+                    <h6 class="fw-bold mb-3">Atur jumlah dan catatan</h6>
+
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="qty-box">
+                            <button type="button" id="btn-qty-minus" onclick="changeDetailQty(-1)">-</button>
+                            <input type="text" id="detail-qty-input" value="1" readonly>
+                            <button type="button" id="btn-qty-plus" onclick="changeDetailQty(1)">+</button>
                         </div>
+                        <span class="small">Stok: <strong class="text-warning" id="product-stock">0</strong></span>
+                    </div>
+
+                    <!-- CATATAN UNTUK PENJUAL -->
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-link text-success text-decoration-none fw-bold small p-0 mb-1" onclick="toggleNoteInput()">
+                            <i class="bi bi-pencil"></i> Tambah Catatan
+                        </button>
+                        <input type="text" id="order-note-input" class="form-control form-control-sm d-none" placeholder="Contoh: Warna hitam, ukuran L...">
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted small">Subtotal</span>
+                        <span class="fw-bold fs-5 text-dark" id="detail-subtotal-price">Rp 0</span>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2 mb-3">
+                        <button type="button" class="btn-buy-solid" id="btn-add-cart" onclick="addToCart()">
+                            <i class="bi bi-plus-lg"></i> Keranjang
+                        </button>
+                        <button type="button" class="btn-buy-outline" id="btn-buy-now" onclick="buyNow()">
+                            Beli Langsung
+                        </button>
+                    </div>
+
+                    <div class="d-flex justify-content-around pt-2 border-top">
+                        <button type="button" class="action-mini-btn" id="btn-wishlist-detail" onclick="toggleWishlistDetail()">
+                            <i class="bi bi-heart"></i> Wishlist
+                        </button>
+                        <div class="vr"></div>
+                        <button type="button" class="action-mini-btn" onclick="shareProductLink()">
+                            <i class="bi bi-share"></i> Share
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card detail-card mb-5">
-            <h5 class="fw-bold mb-3">Ulasan Pembeli</h5>
-            <div id="review-list" class="row g-3"></div>
+        <hr class="my-5">
+
+        <!-- BAGIAN ULASAN PEMBELI + BUKTI FOTO & VIDEO -->
+        <div id="sec-ulasan" class="mb-5">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <h5 class="fw-bold mb-0">ULASAN & BUKTI PEMBELI</h5>
+                    <small class="text-muted">Foto dan video asli dari pembeli terverifikasi</small>
+                </div>
+                <button type="button" class="btn btn-sm btn-success fw-bold px-3" onclick="openDirectReviewModal()">
+                    <i class="bi bi-camera-video-fill me-1"></i> Tulis Ulasan & Upload Bukti
+                </button>
+            </div>
+            <div id="review-list" class="row g-3">
+                <div class="col-12 text-muted small">Memuat ulasan pembeli...</div>
+            </div>
         </div>
 
-        <div class="mt-4 d-none" id="similar-section">
-            <div class="d-flex align-items-center mb-1"><h5 class="fw-bold mb-0 d-flex align-items-center"><i class="bi bi-stars text-warning me-2"></i> Produk Lainnya Untukmu <span class="badge bg-success ms-2" style="font-size: 0.7rem;">AI Recommendation</span></h5></div>
-            <p class="text-muted mb-3" style="font-size: 0.85rem;">Berdasarkan kemiripan kategori dan deskripsi produk yang sedang Anda lihat.</p>
+        <!-- BAGIAN REKOMENDASI PRODUK LAINNYA -->
+        <div id="sec-rekomendasi" class="pt-3 d-none">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <h5 class="fw-bold mb-0">Pilihan Lainnya Untukmu</h5>
+                    <span class="badge bg-success" style="font-size: 0.7rem;">AI Recommendation</span>
+                </div>
+                <a href="/api/products/view" class="text-success fw-bold text-decoration-none small">Lihat Semua</a>
+            </div>
             <div class="row g-3" id="similar-list"></div>
         </div>
     </div>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex"><div class="toast-body" id="toast-message">Berhasil!</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>
+    <!-- MODAL TULIS ULASAN & BUKTI FOTO/VIDEO -->
+    <div class="modal fade" id="directReviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-star-fill text-warning"></i> Beri Ulasan & Bukti Produk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="direct-rating-value" value="5">
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Penilaian Bintang</label>
+                        <div class="star-picker" id="directStarPicker">
+                            <i class="bi bi-star-fill selected" data-val="1"></i>
+                            <i class="bi bi-star-fill selected" data-val="2"></i>
+                            <i class="bi bi-star-fill selected" data-val="3"></i>
+                            <i class="bi bi-star-fill selected" data-val="4"></i>
+                            <i class="bi bi-star-fill selected" data-val="5"></i>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Komentar Ulasan</label>
+                        <textarea id="direct-review-comment" class="form-control" rows="3" placeholder="Bagikan kepuasan Anda tentang kualitas barang ini..."></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold text-success">
+                            <i class="bi bi-camera-video-fill"></i> Upload Bukti Foto / Video (Maks. 5 file)
+                        </label>
+                        <input type="file" id="direct-review-files" class="form-control form-control-sm" accept="image/*,video/*" multiple onchange="previewDirectReviewMedia(this)">
+                        <div id="direct-review-preview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success fw-bold" id="btn-send-direct-review" onclick="submitDirectReview()">Kirim Ulasan</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer class="footer"><div class="container text-center"><h5 class="fw-bold text-success mb-2"><i class="bi bi-bag-heart-fill"></i> TokoPintar</h5><p class="mb-0">&copy; 2026 TokoPintar. Hak Cipta Dilindungi.</p></div></footer>
+    <!-- MODAL LIGHTBOX PREVIEW BUKTI FOTO/VIDEO -->
+    <div class="modal fade" id="mediaPreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-secondary">
+                    <h6 class="modal-title">Bukti Ulasan Pembeli</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-3" id="media-lightbox-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFIKASI -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message">Berhasil!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER MULTI-KOLOM -->
+    <footer class="footer-tokped">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-6 col-md-3">
+                    <h6>TokoPintar</h6>
+                    <ul>
+                        <li><a href="/api/products/about">Tentang TokoPintar</a></li>
+                        <li><a href="/api/products/view">Katalog Produk</a></li>
+                        <li><a href="/api/admin/dashboard">Portal Pedagang</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Beli & Jual</h6>
+                    <ul>
+                        <li><a href="/api/products/cart">Keranjang Belanja</a></li>
+                        <li><a href="/api/products/wishlist">Wishlist Saya</a></li>
+                        <li><a href="/api/orders/view">Lacak Status Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Bantuan & Keamanan</h6>
+                    <ul>
+                        <li><a href="/api/profile/view">Pengaturan Akun & Alamat</a></li>
+                        <li><a href="#">Kebijakan Privasi</a></li>
+                        <li><a href="#">Syarat & Ketentuan</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-bag-heart-fill"></i> TokoPintar</h5>
+                    <p class="small mb-2">Platform e-commerce cerdas dengan rekomendasi AI dan pelacakan lokasi pengiriman akurat.</p>
+                    <div class="d-flex gap-3 fs-5 text-success">
+                        <i class="bi bi-instagram"></i>
+                        <i class="bi bi-facebook"></i>
+                        <i class="bi bi-youtube"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top pt-3 text-center small">
+                &copy; 2026 TokoPintar. Hak Cipta Dilindungi.
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // --- LOGIKA LOGIN NAVBAR ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('token');
-            const role = localStorage.getItem('user_role');
-            const name = localStorage.getItem('user_name');
-            if (token && name) {
-                document.getElementById('auth-buttons').classList.add('d-none');
-                document.getElementById('user-profile').classList.remove('d-none');
-                document.getElementById('user-profile').classList.add('d-flex');
-                document.getElementById('nav-username').innerText = `Halo, ${name}`;
-                if (role === 'admin') document.getElementById('btn-dashboard').classList.remove('d-none');
-            }
-            updateCartBadge();
-        });
-
-        function logout() { localStorage.removeItem('token'); localStorage.removeItem('user_role'); localStorage.removeItem('user_name'); window.location.reload(); }
-
         const productId = "{{ product_id }}";
         let currentProduct = null;
+        let selectedQty = 1;
+
+        const mediaLightbox = new bootstrap.Modal(document.getElementById('mediaPreviewModal'));
+        const directReviewModal = new bootstrap.Modal(document.getElementById('directReviewModal'));
+
+        const formatRupiah = (val) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val || 0);
 
         function showToast(message, isSuccess = true) {
             const toastEl = document.getElementById('liveToast');
             document.getElementById('toast-message').innerText = message;
-            if(isSuccess) { toastEl.classList.replace('bg-danger', 'bg-success'); } 
-            else { toastEl.classList.replace('bg-success', 'bg-danger'); }
+            toastEl.classList.toggle('bg-success', isSuccess);
+            toastEl.classList.toggle('bg-danger', !isSuccess);
             new bootstrap.Toast(toastEl).show();
+        }
+
+        function setActiveSubnav(el) {
+            document.querySelectorAll('.subnav-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function switchInfoTab(tab) {
+            document.getElementById('btn-tab-desc').classList.toggle('active', tab === 'desc');
+            document.getElementById('btn-tab-spec').classList.toggle('active', tab === 'spec');
+            document.getElementById('panel-desc').classList.toggle('d-none', tab !== 'desc');
+            document.getElementById('panel-spec').classList.toggle('d-none', tab !== 'spec');
+        }
+
+        function toggleNoteInput() {
+            const input = document.getElementById('order-note-input');
+            input.classList.toggle('d-none');
+            if (!input.classList.contains('d-none')) input.focus();
+        }
+
+        function shareProductLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showToast('Tautan produk berhasil disalin ke clipboard!');
+            }).catch(() => {
+                showToast('Salin URL di browser Anda untuk membagikan produk.');
+            });
+        }
+
+        function openMediaLightbox(type, url) {
+            const body = document.getElementById('media-lightbox-body');
+            body.innerHTML = type === 'video'
+                ? `<video src="${url}" controls autoplay style="max-width: 100%; max-height: 75vh; border-radius: 8px;"></video>`
+                : `<img src="${url}" style="max-width: 100%; max-height: 75vh; border-radius: 8px;" alt="Bukti Ulasan">`;
+            mediaLightbox.show();
+        }
+
+        function getProductImage(product) {
+            if (product.image_url && product.image_url.trim() !== '' && !product.image_url.includes('picsum.photos')) {
+                return product.image_url;
+            }
+            return `https://loremflickr.com/500/500/product?lock=${product.id || 1}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('user_role');
+            const name = localStorage.getItem('user_name');
+            const savedAddr = localStorage.getItem('user_address');
+
+            if (savedAddr) {
+                const shortAddr = savedAddr.split(',').slice(0, 2).join(',');
+                document.getElementById('header-ship-dest').innerText = shortAddr;
+            }
+
+            if (token && name) {
+                document.getElementById('auth-buttons').classList.replace('d-flex', 'd-none');
+                const userProfile = document.getElementById('user-profile');
+                userProfile.classList.remove('d-none');
+                userProfile.classList.add('d-flex');
+                document.getElementById('nav-username').innerText = name;
+                if (role === 'admin' || role === 'pedagang') {
+                    document.getElementById('btn-dashboard').classList.remove('d-none');
+                }
+            }
+            updateCartBadge();
+            loadProductReviews();
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+
+        function requireLogin(actionLabel) {
+            if (!localStorage.getItem('token')) {
+                showToast(`Silakan masuk terlebih dahulu untuk ${actionLabel}.`, false);
+                setTimeout(() => { window.location.href = '/api/auth/view/login'; }, 1000);
+                return false;
+            }
+            return true;
         }
 
         function updateCartBadge() {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             let badge = document.getElementById('cart-badge');
-            let totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-            if (totalItems > 0) { badge.style.display = 'inline-block'; badge.innerText = totalItems; } 
-            else { badge.style.display = 'none'; }
+            let totalItems = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
+            badge.style.display = totalItems > 0 ? 'inline-block' : 'none';
+            badge.innerText = totalItems;
         }
 
-        function getWishlist() { return JSON.parse(localStorage.getItem('wishlist')) || []; }
-        function toggleWishlistDetail() {
+        // --- KONTROL KUANTITAS & SUBTOTAL ---
+        function changeDetailQty(delta) {
             if (!currentProduct) return;
-            let wishlist = getWishlist(); let index = wishlist.findIndex(item => item.id == currentProduct.id); let btn = document.getElementById('btn-wishlist-detail');
-            if (index > -1) { wishlist.splice(index, 1); btn.classList.remove('active'); btn.innerHTML = '<i class="bi bi-heart"></i>'; showToast('Dihapus dari Wishlist', false); } 
-            else { wishlist.push({ id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, image: `https://picsum.photos/seed/${currentProduct.id}/300/200` }); btn.classList.add('active'); btn.innerHTML = '<i class="bi bi-heart-fill"></i>'; showToast('Ditambahkan ke Wishlist'); }
+            const maxStock = Number(currentProduct.stock || 0);
+            const nextQty = selectedQty + delta;
+            if (nextQty < 1 || nextQty > maxStock) return;
+
+            selectedQty = nextQty;
+            document.getElementById('detail-qty-input').value = selectedQty;
+            document.getElementById('btn-qty-minus').disabled = selectedQty <= 1;
+            document.getElementById('btn-qty-plus').disabled = selectedQty >= maxStock;
+            document.getElementById('detail-subtotal-price').innerText = formatRupiah((currentProduct.price || 0) * selectedQty);
+        }
+
+        // --- WISHLIST ---
+        function getWishlist() { return JSON.parse(localStorage.getItem('wishlist')) || []; }
+
+        function toggleWishlistDetail() {
+            if (!requireLogin('menyimpan ke Wishlist')) return;
+            if (!currentProduct) return;
+
+            let wishlist = getWishlist();
+            let index = wishlist.findIndex(item => item.id == currentProduct.id);
+            let btn = document.getElementById('btn-wishlist-detail');
+            const imgUrl = getProductImage(currentProduct);
+
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                btn.innerHTML = '<i class="bi bi-heart"></i> Wishlist';
+                btn.classList.remove('text-danger');
+                showToast('Dihapus dari Wishlist', false);
+            } else {
+                wishlist.push({ id: String(currentProduct.id), name: currentProduct.name, price: currentProduct.price, image: imgUrl });
+                btn.innerHTML = '<i class="bi bi-heart-fill text-danger"></i> Tersimpan';
+                btn.classList.add('text-danger');
+                showToast('Ditambahkan ke Wishlist');
+            }
             localStorage.setItem('wishlist', JSON.stringify(wishlist));
         }
+
         function checkWishlistDetail() {
-            if (!currentProduct) return; let wishlist = getWishlist(); let btn = document.getElementById('btn-wishlist-detail');
-            if (wishlist.some(item => item.id == currentProduct.id)) { btn.classList.add('active'); btn.innerHTML = '<i class="bi bi-heart-fill"></i>'; }
+            if (!currentProduct) return;
+            let btn = document.getElementById('btn-wishlist-detail');
+            if (getWishlist().some(item => item.id == currentProduct.id)) {
+                btn.innerHTML = '<i class="bi bi-heart-fill text-danger"></i> Tersimpan';
+                btn.classList.add('text-danger');
+            }
         }
 
+        // --- LOAD DETAIL PRODUK ---
         fetch(`/api/products/${productId}`).then(res => res.json()).then(product => {
             currentProduct = product;
             document.getElementById('loading-detail').classList.add('d-none');
-            document.getElementById('main-product-card').classList.remove('d-none');
-            const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(product.price || 0);
-            let kategoriKunci = product.category ? product.category.split('|')[0].replace('_', ' ') : 'Umum';
+            document.getElementById('main-product-layout').classList.remove('d-none');
+
+            const unitPrice = product.price || 0;
+            const stock = Number(product.stock || 0);
+            let kategoriKunci = product.category ? product.category.split('|')[0].replace(/_/g, ' ') : 'Umum';
+            const imgUrl = getProductImage(product);
+
             document.getElementById('product-name').innerText = product.name || "Tanpa Nama";
-            document.getElementById('product-price').innerText = price;
+            document.getElementById('sticky-prod-title').innerText = product.name || "Detail Produk";
+            document.getElementById('product-price').innerText = formatRupiah(unitPrice);
+            document.getElementById('detail-subtotal-price').innerText = formatRupiah(unitPrice);
             document.getElementById('product-rating').innerText = product.rating || 0;
-            document.getElementById('product-stock').innerText = product.stock || 0;
+            document.getElementById('product-stock').innerText = stock > 0 ? `Sisa ${stock}` : 'Habis';
             document.getElementById('product-desc').innerText = product.description || "Tidak ada deskripsi.";
-            document.getElementById('product-image').src = `https://picsum.photos/seed/${product.id}/800/600`;
+            document.getElementById('product-image').src = imgUrl;
+            document.getElementById('product-thumb-1').src = imgUrl;
+
             document.getElementById('breadcrumb-category').innerText = kategoriKunci;
             document.getElementById('breadcrumb-name').innerText = product.name || "Produk";
+            document.getElementById('detail-cat-link').innerText = kategoriKunci;
+            document.getElementById('spec-prod-id').innerText = `#${product.id}`;
+            document.getElementById('spec-prod-cat').innerText = kategoriKunci;
+
+            const storeName = product.seller_name || "Toko Berkah Jaya";
+            document.getElementById('seller-store-name').innerText = storeName;
+            document.getElementById('seller-avatar-initial').innerText = storeName.charAt(0).toUpperCase();
+            if (product.seller_id) {
+                document.getElementById('btn-visit-store').href = `/api/products/view?seller_id=${product.seller_id}`;
+            }
+
+            document.getElementById('btn-qty-minus').disabled = true;
+            document.getElementById('btn-qty-plus').disabled = stock <= 1;
+
+            if (stock <= 0) {
+                document.getElementById('btn-add-cart').disabled = true;
+                document.getElementById('btn-buy-now').disabled = true;
+                document.getElementById('btn-buy-now').innerText = 'Stok Habis';
+            }
+
             checkWishlistDetail();
             fetch(`/api/products/${productId}/view`, { method: 'POST' }).catch(() => {});
-            let recent = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
-            recent = recent.filter(item => item.id != product.id);
-            recent.unshift({ id: product.id, name: product.name, price: product.price, image: `https://picsum.photos/seed/${product.id}/300/200` });
-            localStorage.setItem('recentlyViewed', JSON.stringify(recent.slice(0, 4)));
-        }).catch(err => {
+        }).catch(() => {
             document.getElementById('loading-detail').classList.add('d-none');
             document.getElementById('error-detail').classList.remove('d-none');
         });
 
-        fetch(`/api/products/${productId}/reviews`).then(res => res.json()).then(data => {
-            const list = document.getElementById('review-list');
-            if (data.data && data.data.length > 0) {
-                data.data.forEach(review => {
-                    let stars = ''; for(let i=0; i<5; i++) { stars += i < review.rating ? '<i class="bi bi-star-fill text-warning"></i>' : '<i class="bi bi-star text-muted"></i>'; }
-                    list.innerHTML += `<div class="col-md-6"><div class="p-3 border rounded h-100"><div class="d-flex justify-content-between mb-2"><strong>${review.user}</strong><div>${stars}</div></div><p class="mb-0 text-muted" style="font-size: 0.9rem;">"${review.comment}"</p></div></div>`;
-                });
-            } else { list.innerHTML = '<div class="col-12"><p class="text-muted">Belum ada ulasan untuk produk ini.</p></div>'; }
-        });
+        // --- KERANJANG & BELI LANGSUNG ---
+        function saveItemToCart() {
+            if (!currentProduct) return false;
+            const stock = Number(currentProduct.stock || 0);
+            if (stock <= 0) {
+                showToast('Maaf, stok produk ini sedang habis.', false);
+                return false;
+            }
 
-        function addToCart() {
-            if (!currentProduct) return;
+            const note = document.getElementById('order-note-input').value.trim();
+            const displayName = note ? `${currentProduct.name} (Catatan: ${note})` : currentProduct.name;
+
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             let existingItem = cart.find(item => item.id == currentProduct.id);
-            if (existingItem) { existingItem.qty += 1; } 
-            else { cart.push({ id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, image: `https://picsum.photos/seed/${currentProduct.id}/300/200`, qty: 1 }); }
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartBadge(); showToast('Berhasil ditambahkan ke keranjang!');
-            const btn = document.getElementById('btn-add-cart'); const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Ditambahkan!';
-            setTimeout(() => { btn.innerHTML = originalText; }, 2000);
-        }
-
-        fetch(`/api/products/${productId}/similar`).then(res => res.json()).then(data => {
-            if (data && data.data && data.data.length > 0) {
-                document.getElementById('similar-section').classList.remove('d-none');
-                const list = document.getElementById('similar-list');
-                data.data.forEach(item => {
-                    const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.price || 0);
-                    list.innerHTML += `<div class="col-6 col-md-3"><a href="/api/products/view/${item.id}" class="text-decoration-none"><div class="card similar-card"><img src="https://picsum.photos/seed/${item.id}/300/200" class="similar-img" alt="${item.name}" loading="lazy"><div class="card-body p-3"><h6 class="fw-semibold text-truncate" style="font-size: 0.9rem;" title="${item.name}">${item.name}</h6><p class="text-dark fw-bold mt-auto mb-0" style="font-size: 1rem;">${price}</p></div></div></a></div>`;
+            if (existingItem) {
+                if (existingItem.qty + selectedQty > stock) {
+                    showToast(`Maksimal pembelian sesuai stok (${stock} barang).`, false);
+                    return false;
+                }
+                existingItem.qty += selectedQty;
+                if (note) existingItem.name = displayName;
+            } else {
+                cart.push({
+                    id: String(currentProduct.id),
+                    name: displayName,
+                    price: currentProduct.price,
+                    image: getProductImage(currentProduct),
+                    qty: selectedQty,
+                    selected: true
                 });
             }
-        }).catch(err => console.log("AI Offline."));
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartBadge();
+            return true;
+        }
+
+        function addToCart() {
+            if (!requireLogin('menambahkan ke keranjang')) return;
+            if (!saveItemToCart()) return;
+            showToast(`${selectedQty} barang ditambahkan ke keranjang!`);
+        }
+
+        function buyNow() {
+            if (!requireLogin('melanjutkan pembelian')) return;
+            if (!saveItemToCart()) return;
+            window.location.href = '/api/products/cart';
+        }
+
+        // --- ULASAN & BUKTI FOTO/VIDEO ---
+        function renderReviewsList(reviews) {
+            const list = document.getElementById('review-list');
+            document.getElementById('nav-review-count').innerText = reviews.length;
+            document.getElementById('rating-count-inline').innerText = reviews.length;
+            list.innerHTML = '';
+
+            if (reviews.length === 0) {
+                list.innerHTML = `
+                    <div class="col-12">
+                        <div class="p-4 text-center bg-light rounded border">
+                            <i class="bi bi-chat-square-text text-muted fs-2"></i>
+                            <p class="text-muted mb-2 mt-2">Belum ada ulasan atau bukti foto/video untuk produk ini.</p>
+                            <button type="button" class="btn btn-sm btn-outline-success fw-bold" onclick="openDirectReviewModal()">Jadilah yang pertama memberi ulasan</button>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            reviews.forEach(review => {
+                let stars = '';
+                for (let i = 0; i < 5; i++) {
+                    stars += i < review.rating ? '<i class="bi bi-star-fill text-warning"></i>' : '<i class="bi bi-star text-muted"></i>';
+                }
+
+                let mediaHtml = '';
+                if (review.media && review.media.length > 0) {
+                    mediaHtml = '<div class="d-flex flex-wrap gap-2 mt-2">';
+                    review.media.forEach(m => {
+                        if (m.type === 'video') {
+                            mediaHtml += `<video src="${m.url}" class="review-media-thumb" muted onclick="openMediaLightbox('video', '${m.url}')"></video>`;
+                        } else {
+                            mediaHtml += `<img src="${m.url}" class="review-media-thumb" onclick="openMediaLightbox('image', '${m.url}')" alt="Bukti">`;
+                        }
+                    });
+                    mediaHtml += '</div>';
+                }
+
+                list.innerHTML += `
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded h-100 bg-white">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong><i class="bi bi-person-circle text-success"></i> ${review.user || 'Pembeli'}</strong>
+                                <div>${stars}</div>
+                            </div>
+                            <div class="text-muted small mb-2">${review.created_at || ''}</div>
+                            <p class="mb-1 text-dark" style="font-size: 0.92rem;">"${review.comment}"</p>
+                            ${mediaHtml}
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function loadProductReviews() {
+            fetch(`/api/orders/reviews/${productId}`)
+                .then(res => res.ok ? res.json() : Promise.reject())
+                .then(data => renderReviewsList(data.data || []))
+                .catch(() => renderReviewsList([]));
+        }
+
+        document.querySelectorAll('#directStarPicker i').forEach(star => {
+            star.addEventListener('click', function () {
+                const val = parseInt(this.getAttribute('data-val'));
+                document.getElementById('direct-rating-value').value = val;
+                document.querySelectorAll('#directStarPicker i').forEach(s => {
+                    s.classList.toggle('selected', parseInt(s.getAttribute('data-val')) <= val);
+                });
+            });
+        });
+
+        function openDirectReviewModal() {
+            if (!requireLogin('menulis ulasan & mengunggah bukti')) return;
+            document.getElementById('direct-review-comment').value = '';
+            document.getElementById('direct-review-files').value = '';
+            document.getElementById('direct-review-preview').innerHTML = '';
+            directReviewModal.show();
+        }
+
+        function previewDirectReviewMedia(input) {
+            const box = document.getElementById('direct-review-preview');
+            box.innerHTML = '';
+            if (!input.files) return;
+            Array.from(input.files).slice(0, 5).forEach(file => {
+                const url = URL.createObjectURL(file);
+                box.innerHTML += file.type.startsWith('video/')
+                    ? `<video src="${url}" style="width: 72px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;" muted></video>`
+                    : `<img src="${url}" style="width: 72px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;" alt="Preview">`;
+            });
+        }
+
+        function submitDirectReview() {
+            const token = localStorage.getItem('token');
+            if (!token) return requireLogin('mengirim ulasan');
+
+            const btn = document.getElementById('btn-send-direct-review');
+            btn.disabled = true;
+            btn.innerText = 'Mengirim...';
+
+            const formData = new FormData();
+            formData.append('product_id', productId);
+            formData.append('rating', document.getElementById('direct-rating-value').value);
+            formData.append('comment', document.getElementById('direct-review-comment').value);
+
+            const files = document.getElementById('direct-review-files').files;
+            if (files) Array.from(files).slice(0, 5).forEach(f => formData.append('media', f));
+
+            fetch('/api/orders/review', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            })
+            .then(async res => {
+                if (res.status === 401) {
+                    localStorage.clear();
+                    directReviewModal.hide();
+                    showToast('Sesi login kedaluwarsa. Mengalihkan ke halaman masuk...', false);
+                    setTimeout(() => { window.location.href = '/api/auth/view/login'; }, 1000);
+                    throw new Error('401');
+                }
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Gagal mengirim ulasan');
+                return data;
+            })
+            .then(data => {
+                directReviewModal.hide();
+                showToast(data.message || 'Ulasan berhasil dikirim!');
+                loadProductReviews();
+            })
+            .catch(err => { if (err.message !== '401') showToast(err.message, false); })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerText = 'Kirim Ulasan';
+            });
+        }
+
+        // --- REKOMENDASI AI ---
+        // --- REKOMENDASI AI + FALLBACK UNTUK PRODUK BARU ---
+        function renderSimilarProducts(items) {
+            const filtered = (items || []).filter(item => String(item.id) !== String(productId)).slice(0, 6);
+            if (filtered.length === 0) return;
+
+            document.getElementById('sec-rekomendasi').classList.remove('d-none');
+            const list = document.getElementById('similar-list');
+            list.innerHTML = '';
+
+            filtered.forEach(item => {
+                const simImg = getProductImage(item);
+                list.innerHTML += `
+                    <div class="col-6 col-md-3 col-lg-2">
+                        <a href="/api/products/view/${item.id}" class="text-decoration-none">
+                            <div class="similar-card d-flex flex-column">
+                                <img src="${simImg}" class="similar-img" alt="${item.name}" loading="lazy">
+                                <div class="p-2 d-flex flex-column flex-grow-1">
+                                    <div class="text-dark small mb-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${item.name}</div>
+                                    <div class="fw-bold text-dark mt-auto">${formatRupiah(item.price)}</div>
+                                    <div class="small text-muted mt-1"><i class="bi bi-star-fill text-warning"></i> ${item.rating || '5.0'} • Terjual 50+</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>`;
+            });
+        }
+
+        fetch(`/api/products/${productId}/similar`)
+            .then(res => res.ok ? res.json() : Promise.reject())
+            .then(data => {
+                if (data && data.data && data.data.length > 0) {
+                    renderSimilarProducts(data.data);
+                } else {
+                    return fetch('/api/products?per_page=8')
+                        .then(r => r.json())
+                        .then(fallback => renderSimilarProducts(fallback.data || []));
+                }
+            })
+            .catch(() => {
+                fetch('/api/products?per_page=8')
+                    .then(r => r.json())
+                    .then(fallback => renderSimilarProducts(fallback.data || []))
+                    .catch(() => {});
+            });
     </script>
 </body>
 </html>

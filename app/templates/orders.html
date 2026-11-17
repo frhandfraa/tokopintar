@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesanan Saya - TokoPintar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #03AC0E;
+            --primary-hover: #028A0B;
+            --primary-glow: rgba(3, 172, 14, 0.25);
+            --bg-color: #F8FAFC;
+            --text-dark: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
+
+        /* GLASS NAVBAR */
+        .navbar-glass {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+        .navbar-brand { font-weight: 800; font-size: 1.5rem; color: var(--primary-color) !important; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
+
+        /* FILTER TABS */
+        .status-pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+        .status-pill {
+            border: 1px solid var(--border-color); background: #fff; color: var(--text-muted);
+            border-radius: 50px; padding: 7px 18px; font-size: 0.85rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+        }
+        .status-pill:hover, .status-pill.active {
+            background: #ECFDF5; border-color: var(--primary-color); color: var(--primary-color);
+        }
+
+        /* LUXURY ORDER CARD */
+        .order-card {
+            background: #fff; border: 1px solid var(--border-color); border-radius: 18px;
+            padding: 22px; transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.04);
+        }
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 32px -10px rgba(15, 23, 42, 0.09);
+            border-color: #CBD5E1;
+        }
+        .order-item-thumb { width: 68px; height: 68px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color); background: #F1F5F9; }
+
+        .btn-luxury {
+            background: linear-gradient(135deg, #03AC0E 0%, #028A0B 100%);
+            color: #fff; font-weight: 700; border-radius: 10px; padding: 8px 18px; border: none;
+            box-shadow: 0 6px 16px -4px var(--primary-glow); transition: 0.2s;
+        }
+        .btn-luxury:hover { color: #fff; transform: translateY(-1px); }
+
+        .star-picker i { font-size: 1.6rem; color: #CBD5E1; cursor: pointer; transition: 0.15s; margin-right: 4px; }
+        .star-picker i.selected { color: #F59E0B; }
+
+        /* FOOTER MULTI-KOLOM */
+        .footer-tokped { background-color: #ffffff; border-top: 2px solid var(--primary-color); padding: 45px 0 30px; margin-top: 70px; font-size: 0.85rem; color: var(--text-muted); }
+        .footer-tokped h6 { font-weight: 700; color: var(--text-dark); margin-bottom: 14px; font-size: 0.95rem; }
+        .footer-tokped ul { list-style: none; padding: 0; margin: 0; }
+        .footer-tokped ul li { margin-bottom: 8px; }
+        .footer-tokped ul li a { color: var(--text-muted); text-decoration: none; }
+        .footer-tokped ul li a:hover { color: var(--primary-color); }
+    </style>
+</head>
+<body>
+    <!-- GLASS NAVBAR -->
+    <nav class="navbar navbar-glass sticky-top mb-4">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/api/products/view"><i class="bi bi-bag-heart-fill"></i> TokoPintar</a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="/api/products/view" class="btn btn-sm btn-outline-success fw-bold rounded-3"><i class="bi bi-shop"></i> Katalog</a>
+                <a href="/api/products/cart" class="text-dark fs-5" title="Keranjang"><i class="bi bi-cart3"></i></a>
+                <a href="/api/profile/view" class="text-dark text-decoration-none d-flex align-items-center gap-1 fw-bold small">
+                    <i class="bi bi-person-circle fs-5 text-success"></i>
+                    <span id="nav-username">Akun</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div>
+                <h3 class="fw-bold mb-1">Daftar Transaksi & Pesanan</h3>
+                <p class="text-muted small mb-0">Pantau status pengiriman, nomor resi, dan berikan ulasan bukti foto/video.</p>
+            </div>
+            <div class="status-pills" id="status-filter-pills">
+                <button type="button" class="status-pill active" onclick="filterOrders('all', this)">Semua</button>
+                <button type="button" class="status-pill" onclick="filterOrders('pending', this)">Diproses / Pending</button>
+                <button type="button" class="status-pill" onclick="filterOrders('dikirim', this)">Dikirim</button>
+                <button type="button" class="status-pill" onclick="filterOrders('selesai', this)">Selesai</button>
+            </div>
+        </div>
+
+        <div id="orders-loading" class="text-center py-5">
+            <div class="spinner-border text-success" role="status"></div>
+            <p class="mt-2 text-muted small">Memuat riwayat pesanan...</p>
+        </div>
+
+        <div id="orders-container" class="d-flex flex-column gap-3"></div>
+    </div>
+
+    <!-- MODAL ULASAN + UPLOAD BUKTI FOTO/VIDEO -->
+    <div class="modal fade" id="orderReviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 18px;">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-star-fill text-warning"></i> Beri Ulasan & Bukti Produk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="rev-product-id">
+                    <input type="hidden" id="rev-rating-val" value="5">
+                    <div class="fw-bold text-success small mb-3" id="rev-product-name">Nama Produk</div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Rating Kepuasan</label>
+                        <div class="star-picker" id="orderStarPicker">
+                            <i class="bi bi-star-fill selected" data-val="1"></i>
+                            <i class="bi bi-star-fill selected" data-val="2"></i>
+                            <i class="bi bi-star-fill selected" data-val="3"></i>
+                            <i class="bi bi-star-fill selected" data-val="4"></i>
+                            <i class="bi bi-star-fill selected" data-val="5"></i>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Komentar Ulasan</label>
+                        <textarea id="rev-comment" class="form-control" rows="3" placeholder="Ceritakan pengalaman Anda menggunakan produk ini..."></textarea>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold text-success">
+                            <i class="bi bi-camera-video-fill"></i> Upload Bukti Foto / Video (Maks. 5 file)
+                        </label>
+                        <input type="file" id="rev-media-files" class="form-control form-control-sm" accept="image/*,video/*" multiple onchange="previewOrderReviewMedia(this)">
+                        <div id="rev-media-preview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn-luxury" id="btn-submit-order-review" onclick="submitOrderReview()">Kirim Ulasan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="orderToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="order-toast-msg">Berhasil!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER MULTI-KOLOM -->
+    <footer class="footer-tokped">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-6 col-md-3">
+                    <h6>TokoPintar</h6>
+                    <ul>
+                        <li><a href="/api/products/about">Tentang TokoPintar</a></li>
+                        <li><a href="/api/products/view">Katalog Produk</a></li>
+                        <li><a href="/api/admin/dashboard">Portal Pedagang</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Beli & Jual</h6>
+                    <ul>
+                        <li><a href="/api/products/cart">Keranjang Belanja</a></li>
+                        <li><a href="/api/products/wishlist">Wishlist Saya</a></li>
+                        <li><a href="/api/orders/view">Lacak Status Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6>Bantuan & Keamanan</h6>
+                    <ul>
+                        <li><a href="/api/profile/view">Pengaturan Akun & Alamat</a></li>
+                        <li><a href="/api/products/about#fitur">Keunggulan AI & GPS</a></li>
+                        <li><a href="/api/products/about#cara-kerja">Cara Berbelanja</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-bag-heart-fill"></i> TokoPintar</h5>
+                    <p class="small mb-2">Platform e-commerce cerdas dengan rekomendasi AI dan pelacakan lokasi pengiriman akurat.</p>
+                </div>
+            </div>
+            <div class="border-top pt-3 text-center small">
+                &copy; 2026 TokoPintar. Hak Cipta Dilindungi.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const token = localStorage.getItem('token');
+        const userName = localStorage.getItem('user_name');
+        if (!token) window.location.href = '/api/auth/view/login';
+        if (userName) document.getElementById('nav-username').innerText = userName;
+
+        let allOrders = [];
+        let currentFilter = 'all';
+        const reviewModal = new bootstrap.Modal(document.getElementById('orderReviewModal'));
+        const formatRupiah = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v || 0);
+
+        function showToast(msg, ok = true) {
+            const el = document.getElementById('orderToast');
+            document.getElementById('order-toast-msg').innerText = msg;
+            el.classList.toggle('bg-success', ok);
+            el.classList.toggle('bg-danger', !ok);
+            new bootstrap.Toast(el).show();
+        }
+
+        function getStatusBadge(status) {
+            const s = (status || '').toLowerCase();
+            if (s === 'selesai') return '<span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">Selesai</span>';
+            if (s === 'dikirim') return '<span class="badge bg-info-subtle text-info-emphasis border border-info-subtle px-3 py-2 rounded-pill">Dikirim</span>';
+            if (s === 'dibatalkan') return '<span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill">Dibatalkan</span>';
+            return '<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill">Pending / Diproses</span>';
+        }
+
+        function loadMyOrders() {
+            fetch('/api/orders', { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(res => {
+                    if (res.status === 401) {
+                        localStorage.clear();
+                        window.location.href = '/api/auth/view/login';
+                        throw new Error('401');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById('orders-loading').classList.add('d-none');
+                    allOrders = data.data || [];
+                    renderOrders();
+                })
+                .catch(() => {
+                    document.getElementById('orders-loading').classList.add('d-none');
+                });
+        }
+
+        function filterOrders(status, btn) {
+            currentFilter = status;
+            document.querySelectorAll('.status-pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            renderOrders();
+        }
+
+        function renderOrders() {
+            const container = document.getElementById('orders-container');
+            const filtered = currentFilter === 'all'
+                ? allOrders
+                : allOrders.filter(o => (o.status || '').toLowerCase().includes(currentFilter));
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="order-card text-center py-5">
+                        <i class="bi bi-bag-x text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="fw-bold mt-3">Belum ada pesanan di kategori ini</h5>
+                        <p class="text-muted small">Yuk jelajahi katalog TokoPintar dan temukan produk favoritmu.</p>
+                        <a href="/api/products/view" class="btn-luxury text-decoration-none mt-1">Mulai Belanja</a>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            filtered.forEach(o => {
+                const isDone = (o.status || '').toLowerCase() === 'selesai';
+                let itemsHtml = '';
+
+                (o.items || []).forEach(item => {
+                    const safeName = (item.name || 'Produk').replace(/'/g, "\\'");
+                    itemsHtml += `
+                        <div class="d-flex align-items-center justify-content-between gap-3 py-2 border-bottom flex-wrap">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="${item.image_url}" class="order-item-thumb" alt="${item.name}">
+                                <div>
+                                    <a href="/api/products/view/${item.product_id}" class="fw-bold text-dark text-decoration-none d-block">${item.name}</a>
+                                    <span class="small text-muted">${item.qty} barang x ${formatRupiah(item.price)}</span>
+                                </div>
+                            </div>
+                            ${isDone ? `
+                                <button type="button" class="btn btn-sm btn-outline-success fw-bold rounded-3"
+                                    onclick="openReviewModal('${item.product_id}', '${safeName}')">
+                                    <i class="bi bi-camera-video-fill me-1"></i> Beri Ulasan & Bukti
+                                </button>` : ''}
+                        </div>`;
+                });
+
+                container.innerHTML += `
+                    <div class="order-card">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-3 mb-2 border-bottom">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="fw-bold text-success"><i class="bi bi-bag-check-fill"></i> ${o.invoice}</span>
+                                <span class="text-muted small">• ${o.created_at}</span>
+                                <span class="badge bg-light text-dark border">Resi: ${o.tracking_number}</span>
+                            </div>
+                            ${getStatusBadge(o.status)}
+                        </div>
+
+                        ${itemsHtml || '<div class="text-muted small py-2">Rincian item pesanan</div>'}
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3 mt-1">
+                            <div class="small text-muted">
+                                <i class="bi bi-geo-alt-fill text-danger"></i> ${o.shipping_address}
+                            </div>
+                            <div class="d-flex align-items-center gap-3 ms-auto">
+                                <div class="text-end">
+                                    <div class="small text-muted">Total Belanja</div>
+                                    <div class="fw-bold fs-5 text-dark">${formatRupiah(o.total_price)}</div>
+                                </div>
+                                ${!isDone && (o.status || '').toLowerCase() !== 'dibatalkan' ? `
+                                    <button type="button" class="btn-luxury btn-sm" onclick="markOrderComplete(${o.id})">
+                                        Pesanan Diterima
+                                    </button>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function markOrderComplete(orderId) {
+            fetch(`/api/orders/${orderId}/complete`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                showToast(data.message || 'Pesanan selesai!');
+                loadMyOrders();
+            });
+        }
+
+        document.querySelectorAll('#orderStarPicker i').forEach(star => {
+            star.addEventListener('click', function () {
+                const val = parseInt(this.getAttribute('data-val'));
+                document.getElementById('rev-rating-val').value = val;
+                document.querySelectorAll('#orderStarPicker i').forEach(s => {
+                    s.classList.toggle('selected', parseInt(s.getAttribute('data-val')) <= val);
+                });
+            });
+        });
+
+        function openReviewModal(pid, name) {
+            document.getElementById('rev-product-id').value = pid;
+            document.getElementById('rev-product-name').innerText = name;
+            document.getElementById('rev-comment').value = '';
+            document.getElementById('rev-media-files').value = '';
+            document.getElementById('rev-media-preview').innerHTML = '';
+            reviewModal.show();
+        }
+
+        function previewOrderReviewMedia(input) {
+            const box = document.getElementById('rev-media-preview');
+            box.innerHTML = '';
+            if (!input.files) return;
+            Array.from(input.files).slice(0, 5).forEach(file => {
+                const url = URL.createObjectURL(file);
+                box.innerHTML += file.type.startsWith('video/')
+                    ? `<video src="${url}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;" muted></video>`
+                    : `<img src="${url}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;" alt="Preview">`;
+            });
+        }
+
+        function submitOrderReview() {
+            const btn = document.getElementById('btn-submit-order-review');
+            btn.disabled = true;
+            btn.innerText = 'Mengirim...';
+
+            const fd = new FormData();
+            fd.append('product_id', document.getElementById('rev-product-id').value);
+            fd.append('rating', document.getElementById('rev-rating-val').value);
+            fd.append('comment', document.getElementById('rev-comment').value);
+
+            const files = document.getElementById('rev-media-files').files;
+            if (files) Array.from(files).slice(0, 5).forEach(f => fd.append('media', f));
+
+            fetch('/api/orders/review', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: fd
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) throw new Error(data.error);
+                reviewModal.hide();
+                showToast(data.message || 'Ulasan berhasil dikirim!');
+            })
+            .catch(err => showToast(err.message, false))
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerText = 'Kirim Ulasan';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMyOrders);
+    </script>
+</body>
+</html>

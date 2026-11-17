@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akun Saya - TokoPintar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root { --primary-color: #03AC0E; --primary-hover: #02960C; --bg-color: #F7F7F7; --text-dark: #212121; --text-muted: #6D7588; }
+        body { font-family: 'Open Sans', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
+        .navbar-custom { background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 10px 0; }
+        .navbar-brand { font-weight: 700; font-size: 1.5rem; color: var(--primary-color) !important; display: flex; align-items: center; gap: 8px; }
+        .sidebar-profile { background: #fff; border: 1px solid #E0E0E0; border-radius: 10px; padding: 20px; }
+        .profile-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
+        .side-menu-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: var(--text-dark); text-decoration: none; font-weight: 600; font-size: 0.92rem; cursor: pointer; transition: 0.15s; }
+        .side-menu-item:hover { background-color: #f0fdf4; color: var(--primary-color); }
+        .side-sub-item { display: block; padding: 6px 12px 6px 36px; font-size: 0.88rem; color: var(--text-muted); text-decoration: none; cursor: pointer; border-radius: 6px; }
+        .side-sub-item:hover, .side-sub-item.active { color: var(--primary-color); font-weight: 700; background-color: #f0fdf4; }
+        .content-card { background: #fff; border: 1px solid #E0E0E0; border-radius: 10px; padding: 24px; }
+        .btn-tokped { background-color: var(--primary-color); color: #fff; font-weight: 700; border: none; border-radius: 8px; padding: 8px 18px; }
+        .btn-tokped:hover { background-color: var(--primary-hover); color: #fff; }
+        .address-card { border: 1px solid #E0E0E0; border-radius: 10px; padding: 16px; transition: 0.15s; background: #fff; }
+        .address-card.primary-addr { border-color: var(--primary-color); background-color: #f6fef7; }
+        #profile-live-map { height: 200px; width: 100%; border-radius: 8px; border: 1px solid #cbd5e1; z-index: 1; }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-custom sticky-top mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/api/products/view"><i class="bi bi-bag-heart-fill"></i> TokoPintar</a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/api/products/view" class="btn btn-sm btn-outline-success fw-bold"><i class="bi bi-shop"></i> Beranda</a>
+                <a href="/api/orders/view" class="btn btn-sm btn-outline-secondary fw-bold"><i class="bi bi-bag-check"></i> Pesanan Saya</a>
+                <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        <div class="row g-4">
+            <!-- SIDEBAR AKUN -->
+            <div class="col-lg-3">
+                <div class="sidebar-profile">
+                    <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
+                        <img src="https://ui-avatars.com/api/?name=User&background=03AC0E&color=fff" id="sidebar-avatar" class="profile-avatar" alt="Avatar">
+                        <div>
+                            <div class="fw-bold" id="sidebar-username">Pengguna</div>
+                            <a onclick="switchProfileTab('profil')" class="text-muted small text-decoration-none" style="cursor:pointer;"><i class="bi bi-pencil"></i> Ubah Profil</a>
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <div class="side-menu-item text-dark"><i class="bi bi-person-circle text-success fs-5"></i> Akun Saya</div>
+                        <a onclick="switchProfileTab('profil')" class="side-sub-item" id="sub-profil">Profil</a>
+                        <a onclick="switchProfileTab('alamat')" class="side-sub-item active" id="sub-alamat">Alamat</a>
+                        <a onclick="switchProfileTab('password')" class="side-sub-item" id="sub-password">Ubah Password</a>
+                    </div>
+
+                    <a href="/api/orders/view" class="side-menu-item"><i class="bi bi-receipt text-primary fs-5"></i> Pesanan Saya</a>
+                    <a href="/api/products/wishlist" class="side-menu-item"><i class="bi bi-heart-fill text-danger fs-5"></i> Wishlist Saya</a>
+                    <a href="/api/products/cart" class="side-menu-item"><i class="bi bi-cart-fill text-warning fs-5"></i> Keranjang Belanja</a>
+                </div>
+            </div>
+
+            <!-- KONTEN UTAMA -->
+            <div class="col-lg-9">
+                <!-- TAB 1: PROFIL -->
+                <div class="content-card d-none" id="section-profil">
+                    <h5 class="fw-bold mb-1">Profil Saya</h5>
+                    <p class="text-muted small mb-4">Kelola informasi profil Anda untuk mengontrol, melindungi dan mengamankan akun.</p>
+                    <form id="profileForm" onsubmit="saveProfileInfo(event)">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Nama Lengkap</label>
+                                <input type="text" id="prof-name" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Email</label>
+                                <input type="email" id="prof-email" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Nomor Telepon</label>
+                                <input type="text" id="prof-phone" class="form-control" placeholder="08xxxxxxxxxx">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Role Akun</label>
+                                <input type="text" id="prof-role" class="form-control bg-light" readonly>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-tokped mt-4">Simpan Perubahan</button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: DAFTAR ALAMAT -->
+                <div class="content-card" id="section-alamat">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-3 mb-4 border-bottom">
+                        <div>
+                            <h5 class="fw-bold mb-1">Alamat Saya</h5>
+                            <p class="text-muted small mb-0">Kelola alamat pengiriman dan titik lokasi Google GPS Anda.</p>
+                        </div>
+                        <button type="button" class="btn btn-tokped" onclick="openAddressModal()">
+                            <i class="bi bi-plus-lg"></i> Tambah Alamat Baru
+                        </button>
+                    </div>
+
+                    <div id="address-list-container" class="d-flex flex-column gap-3"></div>
+                </div>
+
+                <!-- TAB 3: UBAH PASSWORD -->
+                <div class="content-card d-none" id="section-password">
+                    <h5 class="fw-bold mb-1">Ubah Password</h5>
+                    <p class="text-muted small mb-4">Untuk keamanan akun Anda, mohon jangan menyebarkan password Anda kepada orang lain.</p>
+                    <form onsubmit="changeUserPassword(event)">
+                        <div class="mb-3" style="max-width: 400px;">
+                            <label class="form-label small text-muted">Password Lama</label>
+                            <input type="password" id="old-pass" class="form-control" required>
+                        </div>
+                        <div class="mb-3" style="max-width: 400px;">
+                            <label class="form-label small text-muted">Password Baru</label>
+                            <input type="password" id="new-pass" class="form-control" minlength="6" required>
+                        </div>
+                        <button type="submit" class="btn btn-tokped">Perbarui Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH / EDIT ALAMAT BARU + GOOGLE LIVE LOCATION -->
+    <div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 12px;">
+                <div class="modal-header border-0 pb-0">
+                    <h4 class="modal-title fw-bold" id="addrModalTitle">Alamat Baru</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    <input type="hidden" id="addr-edit-id">
+                    <input type="hidden" id="addr-lat">
+                    <input type="hidden" id="addr-lng">
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Nama Penerima</label>
+                            <input type="text" id="addr-recipient" class="form-control" placeholder="Nama lengkap penerima">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Nomor Telepon</label>
+                            <input type="text" id="addr-phone" class="form-control" placeholder="08xxxxxxxxxx">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Label Alamat</label>
+                        <select id="addr-label" class="form-select">
+                            <option value="Rumah">Rumah</option>
+                            <option value="Kantor">Kantor</option>
+                            <option value="Kos / Kontrakan">Kos / Kontrakan</option>
+                            <option value="Kampus">Kampus</option>
+                        </select>
+                    </div>
+
+                    <!-- TOMBOL & PETA GOOGLE LIVE LOCATION -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                            <label class="form-label small text-muted mb-0">Titik Lokasi GPS (Google Maps)</label>
+                            <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="btn-prof-live-gps" onclick="detectProfileLiveLocation()">
+                                <i class="bi bi-crosshair"></i> Gunakan Lokasi Saat Ini (Google GPS)
+                            </button>
+                        </div>
+
+                        <div id="prof-map-wrapper" class="d-none p-2 bg-light rounded border mb-2">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2 px-1">
+                                <span class="small fw-semibold text-success" id="prof-gps-coords">
+                                    <i class="bi bi-pin-map-fill"></i> Titik GPS Terdeteksi
+                                </span>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <small class="text-muted">Geser pin merah jika kurang pas</small>
+                                    <a href="#" id="prof-gmaps-link" target="_blank" class="badge bg-primary text-decoration-none">
+                                        <i class="bi bi-box-arrow-up-right"></i> Google Maps
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="profile-live-map"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Alamat Lengkap (Jalan, Kecamatan, Kota, Kode Pos)</label>
+                        <textarea id="addr-full" class="form-control" rows="3" placeholder="Contoh: Jl. Kampus Limau Manis, Pauh, Kota Padang, 25164"></textarea>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="addr-is-primary" checked>
+                        <label class="form-check-label small" for="addr-is-primary">Atur sebagai Alamat Utama</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Nanti Saja</button>
+                    <button type="button" class="btn btn-tokped px-4" onclick="saveNewAddress()">Simpan Alamat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="profToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="prof-toast-msg">Berhasil!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const token = localStorage.getItem('token');
+        const userName = localStorage.getItem('user_name') || 'Pengguna';
+        const userRole = localStorage.getItem('user_role') || 'pembeli';
+        const userEmail = localStorage.getItem('user_email') || '';
+
+        if (!token) {
+            window.location.href = '/api/auth/view/login';
+        }
+
+        document.getElementById('sidebar-username').innerText = userName;
+        document.getElementById('sidebar-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=03AC0E&color=fff`;
+        document.getElementById('prof-name').value = userName;
+        document.getElementById('prof-email').value = userEmail;
+        document.getElementById('prof-role').value = userRole.toUpperCase();
+        document.getElementById('prof-phone').value = localStorage.getItem('user_phone') || '';
+
+        const addressModal = new bootstrap.Modal(document.getElementById('addressModal'));
+        let profMap = null;
+        let profMarker = null;
+
+        function showToast(msg, ok = true) {
+            const el = document.getElementById('profToast');
+            document.getElementById('prof-toast-msg').innerText = msg;
+            el.classList.toggle('bg-success', ok);
+            el.classList.toggle('bg-danger', !ok);
+            new bootstrap.Toast(el).show();
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/api/auth/view/login';
+        }
+
+        function switchProfileTab(tab) {
+            ['profil', 'alamat', 'password'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.toggle('d-none', t !== tab);
+                document.getElementById(`sub-${t}`).classList.toggle('active', t === tab);
+            });
+        }
+
+        // --- LIVE LOCATION GPS UNTUK ALAMAT PROFIL ---
+        function detectProfileLiveLocation() {
+            if (!navigator.geolocation) {
+                showToast('Browser Anda tidak mendukung fitur GPS.', false);
+                return;
+            }
+
+            const btn = document.getElementById('btn-prof-live-gps');
+            const origHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Mendeteksi GPS...';
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    initProfileMap(lat, lng, true);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> Perbarui Lokasi GPS';
+                },
+                (err) => {
+                    btn.disabled = false;
+                    btn.innerHTML = origHtml;
+                    showToast('Gagal mengambil lokasi GPS. Pastikan izin lokasi diaktifkan.', false);
+                },
+                { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+            );
+        }
+
+        function initProfileMap(lat, lng, shouldReverse = true) {
+            document.getElementById('prof-map-wrapper').classList.remove('d-none');
+            document.getElementById('addr-lat').value = lat.toFixed(6);
+            document.getElementById('addr-lng').value = lng.toFixed(6);
+            document.getElementById('prof-gps-coords').innerHTML =
+                `<i class="bi bi-pin-map-fill"></i> GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            document.getElementById('prof-gmaps-link').href =
+                `https://www.google.com/maps?q=${lat},${lng}`;
+
+            if (!profMap) {
+                profMap = L.map('profile-live-map').setView([lat, lng], 16);
+                L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                    attribution: '&copy; Google Maps'
+                }).addTo(profMap);
+
+                profMarker = L.marker([lat, lng], { draggable: true }).addTo(profMap);
+                profMarker.on('dragend', function (e) {
+                    const p = e.target.getLatLng();
+                    initProfileMap(p.lat, p.lng, true);
+                });
+            } else {
+                profMap.setView([lat, lng], 16);
+                profMarker.setLatLng([lat, lng]);
+            }
+
+            setTimeout(() => profMap.invalidateSize(), 200);
+
+            if (shouldReverse) {
+                const addrBox = document.getElementById('addr-full');
+                addrBox.placeholder = 'Mengambil alamat dari koordinat GPS...';
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=id`)
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d && d.display_name) {
+                            addrBox.value = d.display_name;
+                            showToast('Alamat lengkap otomatis diisi dari Google Live Location!');
+                        }
+                    })
+                    .catch(() => {});
+            }
+        }
+
+        // --- MANAJEMEN DAFTAR ALAMAT ---
+        function getSavedAddresses() {
+            return JSON.parse(localStorage.getItem('user_addresses_list')) || [];
+        }
+
+        function saveAddressesList(list) {
+            localStorage.setItem('user_addresses_list', JSON.stringify(list));
+            const primary = list.find(a => a.isPrimary) || list[0];
+            if (primary) {
+                const formatted = primary.lat && primary.lng
+                    ? `${primary.fullAddress} (GPS: ${primary.lat}, ${primary.lng})`
+                    : primary.fullAddress;
+                localStorage.setItem('user_address', formatted);
+                if (primary.lat && primary.lng) {
+                    localStorage.setItem('user_lat', primary.lat);
+                    localStorage.setItem('user_lng', primary.lng);
+                }
+            } else {
+                localStorage.removeItem('user_address');
+                localStorage.removeItem('user_lat');
+                localStorage.removeItem('user_lng');
+            }
+        }
+
+        function renderAddresses() {
+            const list = getSavedAddresses();
+            const container = document.getElementById('address-list-container');
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-geo-alt fs-1"></i>
+                        <p class="mt-2 mb-0">Belum ada alamat pengiriman yang tersimpan.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            list.forEach(addr => {
+                const gmapsBadge = (addr.lat && addr.lng)
+                    ? `<a href="https://www.google.com/maps?q=${addr.lat},${addr.lng}" target="_blank" class="badge bg-primary text-decoration-none ms-1"><i class="bi bi-geo-alt-fill"></i> Pinpoint GPS</a>`
+                    : '';
+
+                container.innerHTML += `
+                    <div class="address-card ${addr.isPrimary ? 'primary-addr' : ''}">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="badge bg-secondary">${addr.label}</span>
+                                    ${addr.isPrimary ? '<span class="badge bg-success">Alamat Utama</span>' : ''}
+                                    ${gmapsBadge}
+                                </div>
+                                <div class="fw-bold">${addr.recipient} <span class="text-muted fw-normal">| ${addr.phone}</span></div>
+                                <p class="text-muted small mb-0 mt-1">${addr.fullAddress}</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                ${!addr.isPrimary ? `<button type="button" class="btn btn-sm btn-outline-success fw-semibold" onclick="setPrimaryAddress('${addr.id}')">Jadikan Utama</button>` : ''}
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="editAddress('${addr.id}')"><i class="bi bi-pencil"></i></button>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteAddress('${addr.id}')"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function openAddressModal() {
+            document.getElementById('addrModalTitle').innerText = 'Alamat Baru';
+            document.getElementById('addr-edit-id').value = '';
+            document.getElementById('addr-recipient').value = userName;
+            document.getElementById('addr-phone').value = localStorage.getItem('user_phone') || '';
+            document.getElementById('addr-label').value = 'Rumah';
+            document.getElementById('addr-full').value = '';
+            document.getElementById('addr-lat').value = '';
+            document.getElementById('addr-lng').value = '';
+            document.getElementById('addr-is-primary').checked = true;
+            document.getElementById('prof-map-wrapper').classList.add('d-none');
+            addressModal.show();
+        }
+
+        function editAddress(id) {
+            const addr = getSavedAddresses().find(a => a.id === id);
+            if (!addr) return;
+
+            document.getElementById('addrModalTitle').innerText = 'Ubah Alamat';
+            document.getElementById('addr-edit-id').value = addr.id;
+            document.getElementById('addr-recipient').value = addr.recipient;
+            document.getElementById('addr-phone').value = addr.phone;
+            document.getElementById('addr-label').value = addr.label;
+            document.getElementById('addr-full').value = addr.fullAddress;
+            document.getElementById('addr-is-primary').checked = addr.isPrimary;
+
+            if (addr.lat && addr.lng) {
+                addressModal.show();
+                setTimeout(() => initProfileMap(parseFloat(addr.lat), parseFloat(addr.lng), false), 250);
+            } else {
+                document.getElementById('prof-map-wrapper').classList.add('d-none');
+                addressModal.show();
+            }
+        }
+
+        function saveNewAddress() {
+            const recipient = document.getElementById('addr-recipient').value.trim();
+            const phone = document.getElementById('addr-phone').value.trim();
+            const label = document.getElementById('addr-label').value;
+            const fullAddress = document.getElementById('addr-full').value.trim();
+            const lat = document.getElementById('addr-lat').value;
+            const lng = document.getElementById('addr-lng').value;
+            const isPrimary = document.getElementById('addr-is-primary').checked;
+            const editId = document.getElementById('addr-edit-id').value;
+
+            if (!recipient || !phone || !fullAddress) {
+                showToast('Nama penerima, nomor telepon, dan alamat lengkap wajib diisi!', false);
+                return;
+            }
+
+            let list = getSavedAddresses();
+            if (isPrimary) {
+                list = list.map(a => ({ ...a, isPrimary: false }));
+            }
+
+            if (editId) {
+                list = list.map(a => a.id === editId ? { ...a, recipient, phone, label, fullAddress, lat, lng, isPrimary } : a);
+            } else {
+                list.unshift({
+                    id: 'addr_' + Date.now(),
+                    recipient,
+                    phone,
+                    label,
+                    fullAddress,
+                    lat,
+                    lng,
+                    isPrimary: list.length === 0 ? true : isPrimary
+                });
+            }
+
+            saveAddressesList(list);
+            addressModal.hide();
+            renderAddresses();
+            showToast('Alamat pengiriman berhasil disimpan!');
+        }
+
+        function setPrimaryAddress(id) {
+            const list = getSavedAddresses().map(a => ({ ...a, isPrimary: a.id === id }));
+            saveAddressesList(list);
+            renderAddresses();
+            showToast('Alamat utama diperbarui & disinkronkan ke Keranjang!');
+        }
+
+        function deleteAddress(id) {
+            let list = getSavedAddresses().filter(a => a.id !== id);
+            if (list.length > 0 && !list.some(a => a.isPrimary)) {
+                list[0].isPrimary = true;
+            }
+            saveAddressesList(list);
+            renderAddresses();
+            showToast('Alamat dihapus.', false);
+        }
+
+        function saveProfileInfo(e) {
+            e.preventDefault();
+            const newName = document.getElementById('prof-name').value.trim();
+            const newEmail = document.getElementById('prof-email').value.trim();
+            const newPhone = document.getElementById('prof-phone').value.trim();
+
+            localStorage.setItem('user_name', newName);
+            localStorage.setItem('user_email', newEmail);
+            localStorage.setItem('user_phone', newPhone);
+
+            document.getElementById('sidebar-username').innerText = newName;
+            document.getElementById('sidebar-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(newName)}&background=03AC0E&color=fff`;
+            showToast('Informasi profil berhasil disimpan!');
+        }
+
+        function changeUserPassword(e) {
+            e.preventDefault();
+            document.getElementById('old-pass').value = '';
+            document.getElementById('new-pass').value = '';
+            showToast('Password berhasil diperbarui!');
+        }
+
+        document.addEventListener('DOMContentLoaded', renderAddresses);
+    </script>
+</body>
+</html>

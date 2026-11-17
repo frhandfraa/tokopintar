@@ -1,0 +1,14 @@
+{
+  "3": {
+    "shipping_address": "Pisang, Padang, Sumatera Barat, 25162, Indonesia (GPS: -0.936028, 100.416672)",
+    "payment_method": "Transfer Bank (Virtual Account)",
+    "shipping_cost": 12000.0,
+    "discount": 0.0
+  },
+  "4": {
+    "shipping_address": "Pisang, Padang, Sumatera Barat, 25162, Indonesia (GPS: -0.936028, 100.416672)",
+    "payment_method": "COD (Bayar di Tempat)",
+    "shipping_cost": 25000.0,
+    "discount": 0.0
+  }
+}

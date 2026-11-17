@@ -183,3 +183,7 @@ def process_checkout():
         return jsonify({"message": "Checkout berhasil!", "order_id": new_order.id}), 200
     except Exception:
         db.session.rollback(); return jsonify({"error": "Gagal memproses pesanan."}), 500
+
+@products_bp.route("/about")
+def about_view():
+        return render_template("about.html")

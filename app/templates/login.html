@@ -4,134 +4,298 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Masuk - TokoPintar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         :root {
-            --primary-color: #00B14F; 
-            --primary-hover: #009943;
+            --primary-color: #03AC0E;
+            --primary-hover: #028A0B;
+            --seller-color: #E67E22;
+            --seller-hover: #D35400;
             --text-dark: #212121;
             --text-muted: #6D7588;
+            --border-line: #E5E7E9;
         }
 
         body {
             font-family: 'Open Sans', sans-serif;
-            background-color: #ffffff;
+            background-color: #FFFFFF;
             color: var(--text-dark);
             min-height: 100vh;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
 
+        /* TOP NAVBAR GLASS ALA TOKOPEDIA */
         .top-navbar {
-            padding: 20px 50px;
+            padding: 16px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: white;
-            position: absolute;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-line);
+            position: fixed;
             top: 0;
             width: 100%;
-            z-index: 10;
+            z-index: 20;
         }
         .navbar-brand-text {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-dark);
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--primary-color);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             text-decoration: none;
+            letter-spacing: -0.6px;
         }
         .navbar-brand-text i { color: var(--primary-color); }
-        .help-link { color: var(--primary-color); text-decoration: none; font-size: 0.9rem; }
-        .help-link:hover { text-decoration: underline; }
+        .help-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .help-link:hover { color: var(--primary-color); }
 
         .split-container {
             display: flex;
             min-height: 100vh;
-            padding-top: 80px;
+            padding-top: 72px;
         }
 
+        /* BANNER SIDE DENGAN SUPERGRAPHIC CIRCLES */
         .banner-side {
-            flex: 1.2;
+            flex: 1.15;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 40px;
+            padding: 48px;
             position: relative;
             overflow: hidden;
-            transition: all 0.5s ease;
-            min-height: calc(100vh - 80px);
+            transition: all 0.45s ease;
+            min-height: calc(100vh - 72px);
         }
         .banner-side::before {
             content: '';
             position: absolute;
-            top: -10%; left: -10%;
-            width: 120%; height: 120%;
-            background-image: radial-gradient(currentColor 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.1;
+            width: 440px;
+            height: 440px;
+            border-radius: 50%;
+            border: 52px solid rgba(255, 255, 255, 0.14);
+            top: -150px;
+            left: -130px;
+            pointer-events: none;
         }
-        
-        .banner-side h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; z-index: 1; }
-        .banner-side p { font-size: 1.1rem; margin-bottom: 30px; z-index: 1; }
-        .banner-illustration { width: 80%; max-width: 400px; height: 300px; background-size: contain; background-repeat: no-repeat; background-position: center; z-index: 1; transition: 0.5s; }
+        .banner-side::after {
+            content: '';
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            bottom: -100px;
+            right: -70px;
+            pointer-events: none;
+        }
 
-        .theme-pembeli { background: linear-gradient(135deg, #e6fcf0 0%, #ccf5db 100%); color: var(--primary-color); }
-        .theme-pembeli p { color: var(--text-dark); }
-        .theme-pembeli .banner-illustration { background-image: url('https://img.freepik.com/free-vector/ecommerce-web-page-concept-illustration_114360-8204.jpg'); }
-        .theme-pembeli::before { color: var(--primary-color); }
+        .banner-side h1 {
+            font-size: 2.35rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            z-index: 1;
+        }
+        .banner-side p {
+            font-size: 1rem;
+            max-width: 460px;
+            line-height: 1.7;
+            margin-bottom: 32px;
+            z-index: 1;
+        }
+        .banner-illustration {
+            width: 82%;
+            max-width: 380px;
+            height: 270px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.14);
+            z-index: 1;
+            transition: 0.4s;
+        }
 
-        .theme-pedagang { background: linear-gradient(135deg, #fff4e6 0%, #ffd8a8 100%); color: #e67e22; }
-        .theme-pedagang p { color: var(--text-dark); }
-        .theme-pedagang .banner-illustration { background-image: url('https://img.freepik.com/free-vector/store-staff-checking-clipboard_23-2148645258.jpg'); }
-        .theme-pedagang::before { color: #e67e22; }
+        .theme-pembeli {
+            background: linear-gradient(135deg, #007A0A 0%, #03AC0E 65%, #19C926 100%);
+            color: #FFFFFF;
+        }
+        .theme-pembeli p { color: rgba(255, 255, 255, 0.92); }
+        .theme-pembeli .banner-illustration {
+            background-image: url('https://img.freepik.com/free-vector/ecommerce-web-page-concept-illustration_114360-8204.jpg');
+        }
 
+        .theme-pedagang {
+            background: linear-gradient(135deg, #C0392B 0%, #E67E22 65%, #F39C12 100%);
+            color: #FFFFFF;
+        }
+        .theme-pedagang p { color: rgba(255, 255, 255, 0.92); }
+        .theme-pedagang .banner-illustration {
+            background-image: url('https://img.freepik.com/free-vector/store-staff-checking-clipboard_23-2148645258.jpg');
+        }
+
+        /* FORM SIDE & ELEVATED CARD */
         .form-side {
-            flex: 0.8;
+            flex: 0.85;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px;
-            background: white;
-            min-height: calc(100vh - 80px);
+            padding: 40px 24px;
+            background: #FAFAFA;
+            min-height: calc(100vh - 72px);
         }
-        .login-card { width: 100%; max-width: 400px; }
-        
-        .auth-tabs { display: flex; background: #F0F3F7; border-radius: 8px; padding: 5px; margin-bottom: 25px; }
-        .auth-tab { flex: 1; text-align: center; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; color: var(--text-muted); border: none; background: transparent; }
-        .auth-tab.active { background: white; color: var(--text-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .auth-tab.active.seller-active { color: #e67e22; }
-        
-        .form-control { border-radius: 4px; padding: 12px 15px; font-size: 0.95rem; border: 1px solid #E0E0E0; }
-        .form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 0.2rem rgba(0, 177, 79, 0.15); }
-        
-        .btn-login { background-color: var(--primary-color); color: white; font-weight: 700; width: 100%; padding: 12px; border-radius: 4px; border: none; transition: 0.2s; margin-top: 10px; }
-        .btn-login:hover { background-color: var(--primary-hover); }
-        .btn-login.seller-btn { background-color: #e67e22; }
-        .btn-login.seller-btn:hover { background-color: #d35400; }
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: #FFFFFF;
+            border: 1px solid var(--border-line);
+            border-radius: 16px;
+            padding: 34px 30px;
+            box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.08);
+        }
 
-        .divider { display: flex; align-items: center; text-align: center; margin: 25px 0; color: var(--text-muted); font-size: 0.85rem; }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #E0E0E0; }
-        .divider:not(:empty)::before { margin-right: 15px; }
-        .divider:not(:empty)::after { margin-left: 15px; }
+        .auth-tabs {
+            display: flex;
+            background: #F3F4F5;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 9px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: 0.25s;
+            color: var(--text-muted);
+            border: none;
+            background: transparent;
+        }
+        .auth-tab.active {
+            background: #FFFFFF;
+            color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .auth-tab.active.seller-active { color: var(--seller-color); }
 
-        .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 10px; border: 1px solid #E0E0E0; border-radius: 4px; background: white; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; transition: 0.2s; }
-        .btn-social:hover { background: #F7F7F7; }
+        #formTitle {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+        }
 
-        .footer-text { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 30px; }
-        .footer-text a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
+        .form-control {
+            border-radius: 8px;
+            padding: 11px 14px;
+            font-size: 0.92rem;
+            border: 1.5px solid #D1D5DB;
+            transition: all 0.2s ease;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(3, 172, 14, 0.12);
+        }
+
+        .btn-login {
+            background-color: var(--primary-color);
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 0.92rem;
+            letter-spacing: 0.3px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            transition: all 0.2s ease;
+            margin-top: 6px;
+        }
+        .btn-login:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .btn-login.seller-btn { background-color: var(--seller-color); }
+        .btn-login.seller-btn:hover:not(:disabled) { background-color: var(--seller-hover); }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 22px 0;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-line);
+        }
+        .divider:not(:empty)::before { margin-right: 14px; }
+        .divider:not(:empty)::after { margin-left: 14px; }
+
+        .btn-social {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border-line);
+            border-radius: 8px;
+            background: #FFFFFF;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 0.88rem;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+        .btn-social:hover {
+            background: #F8FAFC;
+            border-color: #CBD5E1;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border-line);
+        }
+        .footer-text a {
+            color: var(--primary-color);
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .footer-text a:hover { text-decoration: underline; }
 
         @media (max-width: 768px) {
-            .split-container { flex-direction: column; }
+            .split-container { flex-direction: column; padding-top: 0; }
             .banner-side { display: none; }
-            .form-side { min-height: calc(100vh - 80px); padding: 20px; }
-            .top-navbar { padding: 15px 20px; position: relative; }
-            .split-container { padding-top: 0; }
+            .form-side { min-height: calc(100vh - 68px); padding: 24px 16px; }
+            .top-navbar { padding: 14px 20px; position: relative; }
         }
     </style>
 </head>
@@ -142,7 +306,7 @@
             <i class="bi bi-bag-heart-fill"></i> TokoPintar
         </a>
         <div>
-            <a href="#" class="help-link"><i class="bi bi-question-circle"></i> Butuh bantuan?</a>
+            <a href="/api/products/about" class="help-link"><i class="bi bi-question-circle"></i> Butuh bantuan?</a>
         </div>
     </div>
 
@@ -165,7 +329,7 @@
                 <h2 class="fw-bold mb-1" id="formTitle">Masuk Akun</h2>
                 <p class="text-muted mb-4" style="font-size: 0.85rem;" id="formDesc">Silakan masuk untuk mulai berbelanja.</p>
                 
-                <div id="alert-box" class="alert alert-danger d-none" style="font-size: 0.85rem;"></div>
+                <div id="alert-box" class="alert alert-danger d-none rounded-3 py-2" style="font-size: 0.85rem;"></div>
 
                 <form id="loginForm">
                     <div class="mb-3">
@@ -177,7 +341,7 @@
                     </div>
                     
                     <div class="d-flex justify-content-end mb-3">
-                        <a href="#" class="text-decoration-none" style="font-size: 0.85rem; color: #0d6efd;">Lupa Password?</a>
+                        <a href="#" class="text-decoration-none fw-semibold" style="font-size: 0.82rem; color: var(--primary-color);">Lupa Password?</a>
                     </div>
 
                     <button type="submit" class="btn-login" id="btnLogin">LOG IN</button>
@@ -185,12 +349,13 @@
 
                 <div class="divider">ATAU</div>
 
-                <!-- TOMBOL FACEBOOK REAL API -->
-                <button class="btn-social" onclick="window.location.href='/api/auth/facebook/login'">
-                    <i class="bi bi-facebook text-primary"></i> Lanjutkan dengan Facebook
+                <!-- TOMBOL FACEBOOK & GOOGLE OAUTH -->
+                <button type="button" class="btn-social" onclick="loginWithSocial('facebook')">
+                    <i class="bi bi-facebook text-primary fs-5"></i> Lanjutkan dengan Facebook
                 </button>
-                <button class="btn-social" onclick="alert('Fitur Login Google belum tersedia.')">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="16"> Google
+                <button type="button" class="btn-social" onclick="loginWithSocial('google')">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.3 0 6.08-1.09 8.1-2.96l-3.88-3.05c-1.1.74-2.51 1.18-4.22 1.18-3.25 0-6-2.19-6.98-5.14H1.01v3.14C3.05 21.2 7.24 24 12 24z"/><path fill="#FBBC05" d="M5.02 14.03c-.25-.74-.39-1.54-.39-2.36 0-.82.14-1.62.39-2.36V6.17H1.01C.37 7.45 0 8.88 0 10.37s.37 2.92 1.01 4.2l4.01-3.14z"/><path fill="#EA4335" d="M12 4.75c1.79 0 3.41.62 4.68 1.82l3.51-3.51C18.07 1.19 15.3 0 12 0 7.24 0 3.05 2.8 1.01 6.83l4.01 3.14c.98-2.95 3.73-5.22 6.98-5.22z"/></svg>
+                    Lanjutkan dengan Google
                 </button>
 
                 <div class="footer-text">
@@ -202,6 +367,18 @@
 
     <script>
         let loginMode = 'pembeli';
+
+        function loginWithSocial(provider) {
+            window.location.href = `/api/auth/${provider}/login?role=${loginMode}`;
+        }
+
+        // Tampilkan pesan error jika gagal dari redirect OAuth
+        const urlErr = new URLSearchParams(window.location.search).get('error');
+        if (urlErr) {
+            const alertBox = document.getElementById('alert-box');
+            alertBox.innerText = `Gagal masuk (${urlErr}). Silakan coba lagi.`;
+            alertBox.classList.remove('d-none');
+        }
 
         function switchMode(mode) {
             loginMode = mode;

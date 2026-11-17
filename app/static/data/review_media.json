@@ -1,0 +1,28 @@
+{
+  "102627573324": [
+    {
+      "review_id": 1,
+      "user_name": "koko",
+      "comment": "Tokonya bagus pelayanannya ramah",
+      "media": [
+        {
+          "type": "image",
+          "url": "/static/uploads/reviews/rev_102627573324_a960702b6d.png"
+        }
+      ]
+    }
+  ],
+  "1794937953166002": [
+    {
+      "review_id": 2,
+      "user_name": "koko",
+      "comment": "kecewa ga sesuai gambar",
+      "media": [
+        {
+          "type": "image",
+          "url": "/static/uploads/reviews/rev_1794937953166002_c86966f42a.png"
+        }
+      ]
+    }
+  ]
+}
