@@ -4,39 +4,254 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar - TokoPintar</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        :root { --primary-color: #03AC0E; }
-        body { font-family: 'Open Sans', sans-serif; background-color: #F7F7F7; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .auth-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
-        .btn-tokped { background-color: var(--primary-color); color: white; font-weight: 700; width: 100%; padding: 12px; border-radius: 8px; border: none; }
-        .btn-tokped:hover { background-color: #02960C; color: white; }
+        :root {
+            --primary-color: #00B14F; 
+            --primary-hover: #009943;
+            --text-dark: #212121;
+            --text-muted: #6D7588;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #ffffff;
+            color: var(--text-dark);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-navbar {
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            z-index: 10;
+        }
+        .navbar-brand-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .navbar-brand-text i { color: var(--primary-color); }
+        .help-link { color: var(--primary-color); text-decoration: none; font-size: 0.9rem; }
+        .help-link:hover { text-decoration: underline; }
+
+        .split-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .banner-side {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            min-height: calc(100vh - 80px);
+        }
+        .banner-side::before {
+            content: '';
+            position: absolute;
+            top: -10%; left: -10%;
+            width: 120%; height: 120%;
+            background-image: radial-gradient(currentColor 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+        }
+        
+        .banner-side h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; z-index: 1; }
+        .banner-side p { font-size: 1.1rem; margin-bottom: 30px; z-index: 1; }
+        .banner-illustration { width: 80%; max-width: 400px; height: 300px; background-size: contain; background-repeat: no-repeat; background-position: center; z-index: 1; transition: 0.5s; }
+
+        .theme-pembeli { background: linear-gradient(135deg, #e6fcf0 0%, #ccf5db 100%); color: var(--primary-color); }
+        .theme-pembeli p { color: var(--text-dark); }
+        .theme-pembeli .banner-illustration { background-image: url('https://img.freepik.com/free-vector/ecommerce-web-page-concept-illustration_114360-8204.jpg'); }
+        .theme-pembeli::before { color: var(--primary-color); }
+
+        .theme-pedagang { background: linear-gradient(135deg, #fff4e6 0%, #ffd8a8 100%); color: #e67e22; }
+        .theme-pedagang p { color: var(--text-dark); }
+        .theme-pedagang .banner-illustration { background-image: url('https://img.freepik.com/free-vector/store-staff-checking-clipboard_23-2148645258.jpg'); }
+        .theme-pedagang::before { color: #e67e22; }
+
+        .form-side {
+            flex: 0.8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background: white;
+            min-height: calc(100vh - 80px);
+        }
+        .login-card { width: 100%; max-width: 400px; }
+        
+        .auth-tabs { display: flex; background: #F0F3F7; border-radius: 8px; padding: 5px; margin-bottom: 25px; }
+        .auth-tab { flex: 1; text-align: center; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; color: var(--text-muted); border: none; background: transparent; }
+        .auth-tab.active { background: white; color: var(--text-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .auth-tab.active.seller-active { color: #e67e22; }
+        
+        .form-control { border-radius: 4px; padding: 12px 15px; font-size: 0.95rem; border: 1px solid #E0E0E0; }
+        .form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 0.2rem rgba(0, 177, 79, 0.15); }
+        
+        .btn-login { background-color: var(--primary-color); color: white; font-weight: 700; width: 100%; padding: 12px; border-radius: 4px; border: none; transition: 0.2s; margin-top: 10px; }
+        .btn-login:hover { background-color: var(--primary-hover); }
+        .btn-login.seller-btn { background-color: #e67e22; }
+        .btn-login.seller-btn:hover { background-color: #d35400; }
+
+        .divider { display: flex; align-items: center; text-align: center; margin: 25px 0; color: var(--text-muted); font-size: 0.85rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #E0E0E0; }
+        .divider:not(:empty)::before { margin-right: 15px; }
+        .divider:not(:empty)::after { margin-left: 15px; }
+
+        .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 10px; border: 1px solid #E0E0E0; border-radius: 4px; background: white; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; transition: 0.2s; }
+        .btn-social:hover { background: #F7F7F7; }
+
+        .footer-text { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 30px; }
+        .footer-text a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .split-container { flex-direction: column; }
+            .banner-side { display: none; }
+            .form-side { min-height: calc(100vh - 80px); padding: 20px; }
+            .top-navbar { padding: 15px 20px; position: relative; }
+            .split-container { padding-top: 0; }
+        }
     </style>
 </head>
 <body>
-    <div class="auth-card">
-        <h3 class="fw-bold text-center mb-4">Daftar Akun Baru</h3>
-        <div id="alert-box" class="alert alert-danger d-none"></div>
-        <div id="success-box" class="alert alert-success d-none"></div>
-        <form id="registerForm">
-            <div class="mb-3">
-                <label class="form-label">Nama Lengkap</label>
-                <input type="text" class="form-control" id="name" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" required>
-            </div>
-            <div class="mb-4">
-                <label class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" required minlength="6">
-            </div>
-            <button type="submit" class="btn btn-tokped mb-3">Daftar</button>
-            <p class="text-center text-muted" style="font-size: 0.9rem;">Sudah punya akun? <a href="/api/auth/view/login" class="text-success fw-bold text-decoration-none">Masuk</a></p>
-        </form>
+
+    <div class="top-navbar">
+        <a href="/api/products/view" class="navbar-brand-text">
+            <i class="bi bi-bag-heart-fill"></i> TokoPintar
+        </a>
+        <div>
+            <a href="#" class="help-link"><i class="bi bi-question-circle"></i> Butuh bantuan?</a>
+        </div>
     </div>
+
+    <div class="split-container">
+        
+        <div class="banner-side theme-pembeli" id="bannerSide">
+            <h1 id="bannerTitle">Mulai Petualanganmu!</h1>
+            <p id="bannerDesc">Daftar sekarang dan temukan produk impianmu dengan rekomendasi AI.</p>
+            <div class="banner-illustration"></div>
+        </div>
+
+        <div class="form-side">
+            <div class="login-card">
+                
+                <div class="auth-tabs">
+                    <button type="button" class="auth-tab active" id="tab-pembeli" onclick="switchMode('pembeli')">Pembeli</button>
+                    <button type="button" class="auth-tab" id="tab-pedagang" onclick="switchMode('pedagang')">Pedagang</button>
+                </div>
+
+                <h2 class="fw-bold mb-1" id="formTitle">Daftar Akun</h2>
+                <p class="text-muted mb-4" style="font-size: 0.85rem;" id="formDesc">Lengkapi data diri Anda untuk mulai berbelanja.</p>
+                
+                <div id="alert-box" class="alert alert-danger d-none" style="font-size: 0.85rem;"></div>
+                <div id="success-box" class="alert alert-success d-none" style="font-size: 0.85rem;"></div>
+
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="name" placeholder="Nama Lengkap" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="email" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <input type="password" class="form-control" id="password" placeholder="Password (min. 6 karakter)" required minlength="6">
+                        <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3 text-muted" id="togglePassword" style="cursor: pointer;"></i>
+                    </div>
+
+                    <button type="submit" class="btn-login" id="btnRegister">DAFTAR</button>
+                </form>
+
+                <div class="divider">ATAU</div>
+
+                <!-- TOMBOL FACEBOOK REAL API -->
+                <button class="btn-social" onclick="window.location.href='/api/auth/facebook/login'">
+                    <i class="bi bi-facebook text-primary"></i> Daftar dengan Facebook
+                </button>
+                <button class="btn-social" onclick="alert('Fitur Daftar Google belum tersedia.')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="16"> Google
+                </button>
+
+                <div class="footer-text">
+                    Sudah punya akun? <a href="/api/auth/view/login">Masuk Sekarang</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let registerMode = 'pembeli';
+
+        function switchMode(mode) {
+            registerMode = mode;
+            const banner = document.getElementById('bannerSide');
+            const tabPembeli = document.getElementById('tab-pembeli');
+            const tabPedagang = document.getElementById('tab-pedagang');
+            const btnRegister = document.getElementById('btnRegister');
+            const formTitle = document.getElementById('formTitle');
+            const formDesc = document.getElementById('formDesc');
+
+            if (mode === 'pedagang') {
+                banner.classList.remove('theme-pembeli');
+                banner.classList.add('theme-pedagang');
+                document.getElementById('bannerTitle').innerText = "Jadilah Penjual Terbaik!";
+                document.getElementById('bannerDesc').innerText = "Buka toko Anda dan kelola penjualan dengan cerdas di TokoPintar.";
+                
+                tabPedagang.classList.add('active', 'seller-active');
+                tabPembeli.classList.remove('active', 'seller-active');
+                
+                formTitle.innerText = "Daftar Akun Pedagang";
+                formDesc.innerText = "Mulai bangun bisnis Anda hari ini.";
+                btnRegister.innerText = "DAFTAR SEBAGAI PEDAGANG";
+                btnRegister.classList.add('seller-btn');
+            } else {
+                banner.classList.remove('theme-pedagang');
+                banner.classList.add('theme-pembeli');
+                document.getElementById('bannerTitle').innerText = "Mulai Petualanganmu!";
+                document.getElementById('bannerDesc').innerText = "Daftar sekarang dan temukan produk impianmu dengan rekomendasi AI.";
+                
+                tabPembeli.classList.add('active');
+                tabPedagang.classList.remove('active', 'seller-active');
+                
+                formTitle.innerText = "Daftar Akun Pembeli";
+                formDesc.innerText = "Lengkapi data diri Anda untuk mulai berbelanja.";
+                btnRegister.innerText = "DAFTAR";
+                btnRegister.classList.remove('seller-btn');
+            }
+            
+            document.getElementById('alert-box').classList.add('d-none');
+            document.getElementById('success-box').classList.add('d-none');
+        }
+
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('name').value;
@@ -44,24 +259,39 @@
             const password = document.getElementById('password').value;
             const alertBox = document.getElementById('alert-box');
             const successBox = document.getElementById('success-box');
+            const btnSubmit = document.getElementById('btnRegister');
+
+            btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Memproses...';
+            btnSubmit.disabled = true;
+            alertBox.classList.add('d-none');
+            successBox.classList.add('d-none');
 
             fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password })
+                body: JSON.stringify({ name, email, password, role: registerMode })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.error) {
                     alertBox.innerText = data.error;
                     alertBox.classList.remove('d-none');
-                    successBox.classList.add('d-none');
+                    btnSubmit.innerHTML = registerMode === 'pedagang' ? 'DAFTAR SEBAGAI PEDAGANG' : 'DAFTAR';
+                    btnSubmit.disabled = false;
                 } else {
                     successBox.innerText = data.message;
                     successBox.classList.remove('d-none');
-                    alertBox.classList.add('d-none');
-                    setTimeout(() => { window.location.href = '/api/auth/view/login'; }, 1500);
+                    
+                    setTimeout(() => { 
+                        window.location.href = '/api/auth/view/login'; 
+                    }, 2000);
                 }
+            })
+            .catch(err => {
+                alertBox.innerText = "Terjadi kesalahan sistem.";
+                alertBox.classList.remove('d-none');
+                btnSubmit.innerHTML = registerMode === 'pedagang' ? 'DAFTAR SEBAGAI PEDAGANG' : 'DAFTAR';
+                btnSubmit.disabled = false;
             });
         });
     </script>

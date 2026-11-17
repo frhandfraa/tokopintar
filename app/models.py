@@ -23,6 +23,7 @@ class User(db.Model):
 class Product(db.Model):
     __tablename__ = "products"
     id = db.Column(db.BigInteger, primary_key=True) 
+    seller_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True) # TAMBAHAN MULTI-VENDOR
     name = db.Column(db.String(255), nullable=False)
     category = db.Column(db.String(100))
     price = db.Column(db.Numeric(12, 2), default=0)
@@ -34,10 +35,10 @@ class Product(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id, "name": self.name, "category": self.category,
-            "price": float(self.price), "stock": self.stock,
-            "description": self.description, "image_url": self.image_url,
-            "rating": self.rating
+            "id": self.id, "seller_id": self.seller_id, "name": self.name, 
+            "category": self.category, "price": float(self.price), 
+            "stock": self.stock, "description": self.description, 
+            "image_url": self.image_url, "rating": self.rating
         }
 
 class Interaction(db.Model):
@@ -86,7 +87,6 @@ class OrderItem(db.Model):
             "quantity": self.quantity, "price": float(self.price)
         }
 
-# TAMBAHAN BARU: Model Review (Ulasan)
 class Review(db.Model):
     __tablename__ = "reviews"
     id = db.Column(db.Integer, primary_key=True)
