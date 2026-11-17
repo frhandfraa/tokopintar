@@ -1,8 +1,11 @@
 from flask import Blueprint, jsonify, render_template, request
-from app.models import Product, Order, OrderItem, Interaction
+from app.models import Product, Order, OrderItem, Interaction, User
 from app import db
 import requests
+import random # Tambahan untuk acak
 from datetime import datetime
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy import func
 
 products_bp = Blueprint('products', __name__)
 
@@ -10,24 +13,19 @@ products_bp = Blueprint('products', __name__)
 # 1. RUTE HALAMAN WEB (HTML)
 # ==========================================
 @products_bp.route('/view', methods=['GET'])
-def view_catalog():
-    return render_template('index.html')
+def view_catalog(): return render_template('index.html')
 
 @products_bp.route('/view/<int:product_id>', methods=['GET'])
-def view_product_detail(product_id):
-    return render_template('product.html', product_id=product_id)
+def view_product_detail(product_id): return render_template('product.html', product_id=product_id)
 
 @products_bp.route('/cart', methods=['GET'])
-def view_cart():
-    return render_template('cart.html')
+def view_cart(): return render_template('cart.html')
 
 @products_bp.route('/success', methods=['GET'])
-def view_success():
-    return render_template('success.html')
+def view_success(): return render_template('success.html')
 
 @products_bp.route('/wishlist', methods=['GET'])
-def view_wishlist():
-    return render_template('wishlist.html')
+def view_wishlist(): return render_template('wishlist.html')
 
 # ==========================================
 # 2. RUTE API PRODUK & KATEGORI
@@ -39,29 +37,24 @@ def get_all_products():
     search_query = request.args.get('search', default='', type=str)
     category_query = request.args.get('category', default='', type=str)
     sort_query = request.args.get('sort', default='', type=str)
+    seller_id = request.args.get('seller_id', default=None, type=int)
     
     query = Product.query
-    if search_query:
-        query = query.filter(Product.name.ilike(f'%{search_query}%'))
-    if category_query:
-        query = query.filter(Product.category.ilike(f'%{category_query}%'))
+    if seller_id: query = query.filter(Product.seller_id == seller_id)
+    if search_query: query = query.filter(Product.name.ilike(f'%{search_query}%'))
+    if category_query: query = query.filter(Product.category.ilike(f'%{category_query}%'))
         
     if sort_query == 'price_asc': query = query.order_by(Product.price.asc())
     elif sort_query == 'price_desc': query = query.order_by(Product.price.desc())
     elif sort_query == 'rating_desc': query = query.order_by(Product.rating.desc())
     else: query = query.order_by(Product.id.desc())
         
-    paginated_products = query.paginate(page=page, per_page=per_page, error_out=False)
-    data = [p.to_dict() for p in paginated_products.items]
-        
+    paginated = query.paginate(page=page, per_page=per_page, error_out=False)
     return jsonify({
-        "data": data,
+        "data": [p.to_dict() for p in paginated.items],
         "meta": {
-            "current_page": paginated_products.page,
-            "total_pages": paginated_products.pages,
-            "total_items": paginated_products.total,
-            "has_next": paginated_products.has_next,
-            "has_prev": paginated_products.has_prev
+            "current_page": paginated.page, "total_pages": paginated.pages,
+            "total_items": paginated.total, "has_next": paginated.has_next, "has_prev": paginated.has_prev
         }
     })
 
@@ -78,6 +71,19 @@ def get_categories():
     except Exception:
         return jsonify({"data": []})
 
+@products_bp.route('/suggestions', methods=['GET'])
+def get_search_suggestions():
+    query = request.args.get('q', default='', type=str)
+    if len(query) < 2: return jsonify({"data": []})
+    suggestions = db.session.query(Product.name).filter(Product.name.ilike(f'%{query}%')).distinct().limit(7).all()
+    return jsonify({"data": [s[0] for s in suggestions]})
+
+@products_bp.route('/seller/<int:seller_id>', methods=['GET'])
+def get_seller_info(seller_id):
+    seller = User.query.get(seller_id)
+    if not seller: return jsonify({"error": "Toko tidak ditemukan"}), 404
+    return jsonify({"data": seller.to_dict()})
+
 @products_bp.route('/<int:product_id>', methods=['GET'])
 def get_product_by_id(product_id):
     product = Product.query.get(product_id)
@@ -85,23 +91,19 @@ def get_product_by_id(product_id):
     return jsonify(product.to_dict())
 
 # ==========================================
-# 3. RUTE INTERAKSI & ULASAN (REVIEWS)
+# 3. RUTE INTERAKSI & ULASAN
 # ==========================================
 @products_bp.route('/<int:product_id>/view', methods=['POST'])
 def track_view(product_id):
     try:
-        # Simulasi user ID 1 (Guest) karena belum login
         new_interaction = Interaction(user_id=1, product_id=product_id, type="view", timestamp=datetime.now())
-        db.session.add(new_interaction)
-        db.session.commit()
+        db.session.add(new_interaction); db.session.commit()
         return jsonify({"status": "success"})
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"status": "error"}), 500
+    except Exception:
+        db.session.rollback(); return jsonify({"status": "error"}), 500
 
 @products_bp.route('/<int:product_id>/reviews', methods=['GET'])
 def get_product_reviews(product_id):
-    # Mock Data (Simulasi Ulasan Tokopedia) karena tabel belum diisi
     dummy_reviews = [
         {"user": "Budi S.", "rating": 5, "comment": "Barang sangat bagus dan sesuai deskripsi. Pengiriman cepat!"},
         {"user": "Siti A.", "rating": 4, "comment": "Kualitas oke, packing rapi. Recommended seller."},
@@ -111,20 +113,17 @@ def get_product_reviews(product_id):
     return jsonify({"data": dummy_reviews})
 
 # ==========================================
-# 4. RUTE AI SERVICE (REKOMENDASI)
+# 4. RUTE AI SERVICE (REKOMENDASI ACak)
 # ==========================================
 @products_bp.route('/<int:product_id>/similar', methods=['GET'])
 def get_similar_products(product_id):
     try:
         response = requests.get(f'http://localhost:5001/recommend/similar/{product_id}?top_n=4', timeout=3)
         if response.status_code != 200: return jsonify({"data": []})
-        ai_data = response.json()
-        rec_list = ai_data.get('data', [])
+        rec_list = response.json().get('data', [])
         recommendations = []
         for item in rec_list:
-            pid = item.get('product_id')
-            try: product = Product.query.get(int(pid)) 
-            except ValueError: continue
+            product = Product.query.get(int(item.get('product_id', 0)))
             if product: recommendations.append({"id": product.id, "name": product.name, "price": float(product.price)})
         return jsonify({"data": recommendations})
     except Exception:
@@ -133,19 +132,25 @@ def get_similar_products(product_id):
 @products_bp.route('/recommendations/popular', methods=['GET'])
 def get_popular_recommendations():
     try:
-        k = request.args.get('k', default=4, type=int)
-        response = requests.get(f'http://localhost:5001/recommend/popular?k={k}', timeout=3)
+        k = request.args.get('k', default=10, type=int) # Ambil lebih banyak untuk carousel
+        
+        # 1. Ambil lebih banyak data dari AI Service (misal k*3)
+        response = requests.get(f'http://localhost:5001/recommend/popular?k={k*3}', timeout=2)
         if response.status_code == 200:
-            ai_data = response.json()
-            rec_list = ai_data.get('data', [])
-            recommendations = []
-            for item in rec_list:
-                pid = item.get('product_id')
-                try: product = Product.query.get(int(pid))
-                except ValueError: continue
-                if product: recommendations.append({"id": product.id, "name": product.name, "price": float(product.price)})
-            if recommendations: return jsonify({"data": recommendations})
-        fallback_products = Product.query.order_by(Product.rating.desc()).limit(k).all()
+            rec_list = response.json().get('data', [])
+            if rec_list:
+                # ACAK hasil dari AI
+                random.shuffle(rec_list)
+                recommendations = []
+                for item in rec_list[:k]:
+                    product = Product.query.get(int(item.get('product_id', 0)))
+                    if product: recommendations.append({"id": product.id, "name": product.name, "price": float(product.price)})
+                
+                if recommendations: return jsonify({"data": recommendations})
+
+        # 2. FALLBACK: Jika AI mati, ambil acak dari database berdasarkan rating tertinggi
+        # Menggunakan func.random() dari SQLAlchemy untuk PostgreSQL
+        fallback_products = Product.query.order_by(func.random()).limit(k).all()
         return jsonify({"data": [{"id": p.id, "name": p.name, "price": float(p.price)} for p in fallback_products]})
     except Exception:
         return jsonify({"data": []})
@@ -154,31 +159,27 @@ def get_popular_recommendations():
 # 5. RUTE CHECKOUT
 # ==========================================
 @products_bp.route('/checkout', methods=['POST'])
+@jwt_required()
 def process_checkout():
     try:
+        user_id = get_jwt_identity()
         data = request.get_json()
         cart_items = data.get('cart', [])
         total_price = data.get('total_price', 0)
 
         if not cart_items: return jsonify({"error": "Keranjang kosong"}), 400
 
-        # Asumsi user_id 1 sudah ada di database sebagai Guest
-        new_order = Order(user_id=1, total=total_price, status="Pending", created_at=datetime.now())
-        db.session.add(new_order)
-        db.session.flush()
+        new_order = Order(user_id=int(user_id), total=total_price, status="Pending", created_at=datetime.now())
+        db.session.add(new_order); db.session.flush()
 
         for item in cart_items:
             product = Product.query.get(item['id'])
             if product:
                 product.stock = max(0, product.stock - item['qty'])
-                new_item = OrderItem(order_id=new_order.id, product_id=product.id, quantity=item['qty'], price=item['price'])
-                db.session.add(new_item)
-                new_interaction = Interaction(user_id=1, product_id=product.id, type="purchase", timestamp=datetime.now())
-                db.session.add(new_interaction)
+                db.session.add(OrderItem(order_id=new_order.id, product_id=product.id, quantity=item['qty'], price=item['price']))
+                db.session.add(Interaction(user_id=int(user_id), product_id=product.id, type="purchase", timestamp=datetime.now()))
 
         db.session.commit()
         return jsonify({"message": "Checkout berhasil!", "order_id": new_order.id}), 200
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error Checkout: {e}")
-        return jsonify({"error": "Gagal memproses pesanan."}), 500
+    except Exception:
+        db.session.rollback(); return jsonify({"error": "Gagal memproses pesanan."}), 500
